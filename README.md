@@ -14,8 +14,8 @@ Design the test data that fit your project hierarchy and reports. The tool will 
 
 - TypeScript
 - Axios
-- Uuid
-- Faker 8.3.1
+- UUID
+- Faker
 
 ## Minimum System Requirements 
 
@@ -46,6 +46,7 @@ export class CustomDesign extends DocDesign {
 }
 ```
 3. Update the `getDesign` function to return an array that adhere with the [DesignSpec interface](./src/doc-design.ts).
+
 | Property | Required | Explanation |
 | --------------- | --------------- | --------------- |
 | amount: number | Yes | The number of docs to generate, it also servers as the batch size of docs to upload |
@@ -100,7 +101,7 @@ export class CustomDesign extends DocDesign {
 
 Based on that previous example. The tool will create and push 14 report docs at once (the `amount` is also the batch size pushed into the CHT instance), then it creates 10 hospitals docs, and lastly it will create 5 people docs per each hospital (it's sent in groups of 5 docs to the CHT instance).
 
-6. Generate and upload data `npm run generate`. That's all! You can check the data in the CHT's CouchDB. 
+5. Generate and upload data `npm run generate`. That's all! You can check the data in the CHT's CouchDB. 
 
 ## Knows and TODOs
 
