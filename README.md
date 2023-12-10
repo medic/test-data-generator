@@ -4,11 +4,11 @@ Tool to upload test data into CHT test instances.
 
 ## Description
 
+> ⚠ It is not recommended to use this tool to push data into production instances. ⚠ 
+
 This tool is intended for application builders or CHT developer contributors that have knowledge about the design of docs from the CHT's CouchDB. 
 
 Design the test data that fit your project hierarchy and reports. The tool will generate CouchDB docs and push them into your CHT test instance.
-
-> ⚠ It is recommended to not use this tool to push data into production instances. ⚠
 
 ## Technologies and Packages Used
 
