@@ -3,6 +3,9 @@ import { v4 as uuid } from 'uuid';
 
 import { DesignSpec, DocDesign, DocType } from './doc-design.js';
 
+/**
+ * Design the test data by modifying this class. See the README for more info.
+ */
 export class CustomDesign extends DocDesign {
   getDesign(): DesignSpec[] {
     return [
