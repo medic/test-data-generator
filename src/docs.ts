@@ -7,9 +7,9 @@ export class Docs {
     const path = `${process.env.COUCH_URL}/_bulk_docs`;
     try {
       await axios.post(path, { docs });
-      console.info('Successfully saved these docs ::>', docs);
+      console.info(`Successfully saved ${docs.length} docs.`);
     } catch (error) {
-      console.error('Failed saving these docs ::>', docs, 'Error ::> ', error);
+      console.error('Failed saving docs ::>', error);
     }
   }
 
@@ -22,13 +22,16 @@ export class Docs {
 
       const batch = new Array(design.amount)
         .fill(null)
-        .map(() => ({
-          design,
-          doc: {
-            ...design.getDoc(),
-            parent: parentID && { _id: parentID },
-          },
-        }));
+        .map(() => {
+          const doc = design.getDoc();
+          return {
+            design,
+            doc: {
+              ...doc,
+              parent: doc.parent?._id ? doc.parent : parentID && { _id: parentID },
+            },
+          };
+        });
 
       const parentDocsPromise = Docs.saveDocs(batch.map(entity => entity.doc));
       return parentDocsPromise.then(() => Promise.all(
