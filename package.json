@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "eslint src/**/*.ts",
     "build": "npm run lint && tsc",
-    "generate": "npm run build && node built/."
+    "generate": "npm run build && echo 'Processing, please wait.' && node built/."
   },
   "keywords": [
     "CHT",
