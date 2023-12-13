@@ -31,17 +31,17 @@ export class CustomDesign extends DocDesign {
   private getContactsDesign(): DesignSpec[] {
     return [
       {
-        amount: 3,
+        amount: 1,
         getDoc: () => this.getPlaceDoc('district_hospital', 'Hospital'),
         children: [{
-          amount: 2,
+          amount: 1,
           getDoc: () => this.getPlaceDoc('health_center', 'Health Center'),
           children: [
-            { amount: 2, getDoc: () => this.getPersonDoc('chw') },
+            { amount: 1, getDoc: () => this.getPersonDoc('chw') },
             {
-              amount: 30,
+              amount: 1,
               getDoc: () => this.getPlaceDoc('clinic', 'Household'),
-              children: [ { amount: 4, getDoc: () => this.getPersonDoc('patient') } ],
+              children: [ { amount: 1, getDoc: () => this.getPersonDoc('patient') } ],
             }
           ],
         }],
@@ -52,7 +52,14 @@ export class CustomDesign extends DocDesign {
           ...this.getPlaceDoc('health_center', 'Health Center'),
           parent: { _id: '947535d5-cf8a-4b1d-93ca-0b39826b3e68' },
         }),
-        children: [ { amount: 3, getDoc: () => this.getPersonDoc('chw') } ],
+        children: [
+          { amount: 1, getDoc: () => this.getPersonDoc('chw') },
+          {
+            amount: 1,
+            getDoc: () => this.getPlaceDoc('clinic', 'Household'),
+            children: [ { amount: 1, getDoc: () => this.getPersonDoc('patient') } ],
+          }
+        ],
       },
     ];
   }

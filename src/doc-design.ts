@@ -8,9 +8,15 @@ export interface DesignSpec {
   children?: DesignSpec[];
 }
 
-interface Doc {
+export interface Parent {
+  _id: string,
+  parent?: Record<string, string>
+}
+
+export interface Doc {
   _id: string;
   type: string;
+  parent?: Parent;
   [key: string]: unknown;
 }
 

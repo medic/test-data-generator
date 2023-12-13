@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { DocType } from './doc-design.js';
+import { DocType, Parent, Doc } from './doc-design.js';
 
 export class Docs {
   private static async saveDocs(docs) {
@@ -13,7 +13,7 @@ export class Docs {
     }
   }
 
-  static createDocs(designs, parentID?: string) {
+  static createDocs(designs, parentDoc?: Doc) {
     return designs.map(design => {
       if (!design.amount && !design.getDoc) {
         console.warn('Remember to set the "amount" and the "getDoc".');
@@ -28,7 +28,7 @@ export class Docs {
             design,
             doc: {
               ...doc,
-              parent: doc.parent?._id ? doc.parent : parentID && { _id: parentID },
+              parent: Docs.createParentRelation(doc.parent || parentDoc)
             },
           };
         });
@@ -37,8 +37,21 @@ export class Docs {
       return parentDocsPromise.then(() => Promise.all(
         batch
           .filter(entity => entity.doc.type !== DocType.dataRecord && entity.design.children)
-          .map(entity => Docs.createDocs(entity.design.children, entity.doc._id))
+          .map(entity => Docs.createDocs(entity.design.children, entity.doc))
       ));
     });
+  }
+
+  private static createParentRelation(parentDoc: Doc): Parent {
+    if (!parentDoc) {
+      return;
+    }
+
+    const parent: Parent = { _id: parentDoc._id };
+    if (parentDoc.parent) {
+      parent.parent = { _id: parentDoc.parent._id };
+    }
+
+    return parent;
   }
 }
