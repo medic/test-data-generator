@@ -105,11 +105,10 @@ Based on that previous example. The tool will create and push 14 report docs at 
 
 ## Knows and TODOs
 
-- Add unit tests. 
 - The custom-design.ts can be located in a better place.
 - Make the tool a CLI and read the path from a custom-design.ts script.
 - Make test data samples for CHT's "default" config so we can use copy from there as a base. 
-- Make a getContact(id) function so we can get an existing contact and use it to associate new test data (right now it's hardcoded).
+- Make a `getContact(doc._id)` function, to get an existing contact's information (name, etc.) and use it in new test data (right we need to hard code existing contact information).
 
 ## License
 
