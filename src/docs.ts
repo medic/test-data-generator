@@ -14,7 +14,6 @@ export class Docs {
   }
 
   static createDocs(designs, parentDoc?: Doc) {
-    var unnused;
     return designs.map(design => {
       if (!design.amount || !design.getDoc) {
         console.warn('Remember to set the "amount" and the "getDoc".');
