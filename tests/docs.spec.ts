@@ -167,7 +167,7 @@ describe('Docs', () => {
       .all(Docs.createDocs(designs))
       .catch(() => assert('Should have not thrown error.'));
 
-    expect(axiosPostStub.callCount).to.equal(7);
+    expect(axiosPostStub.callCount).to.equal(8);
     axiosPostStub.args.forEach(call => expect(call[0]).to.contain('/_bulk_docs'));
     expect(axiosPostStub.args[0][1]).to.deep.equal({
       docs: [{ ...hospitalDoc, parent: undefined }],
@@ -181,7 +181,7 @@ describe('Docs', () => {
     });
     expect(axiosPostStub.args[3][1]).to.deep.equal({
       docs: Array(13).fill({ ...centerDoc, parent: { _id: '009' } }),
-    });
+    })
 
     expect(axiosPostStub.args[4][1]).to.deep.equal({
       docs: Array(7).fill({ ...unitDoc, parent: { _id: centerDoc._id, parent: { _id: '007' } } }),
