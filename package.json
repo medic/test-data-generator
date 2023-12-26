@@ -10,7 +10,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "lint": "eslint src/**/*.ts",
+    "lint": "eslint .",
     "build": "npm run lint && tsc",
     "generate": "npm run build && echo 'Processing, please wait.' && node built/."
   },

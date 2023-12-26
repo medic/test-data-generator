@@ -20,12 +20,12 @@ describe('Docs', () => {
 
   it('should create docs based on the doc design', async () => {
     const reportDoc = { _id: 'report-x', form: 'pregnancy_danger_sign', type: DocType.dataRecord };
-    const personDoc = { _id: 'person-x', type: DocType.person, name: 'Green Hospital' }
-    const hospitalDoc = { _id: 'hospital-x', type: 'hospital', name: 'Green Hospital' }
-    const centerDoc = { _id: 'center-x', type: 'center', name: 'Green Health Center' }
-    const clinicDoc = { _id: 'clinic-x', type: 'clinic', name: 'Green Clinic' }
-    const unitDoc = { _id: 'unit-x', type: 'unit', name: 'Green Unit' }
-    const houseDoc = { _id: 'house-x', type: 'house', name: 'Green House' }
+    const personDoc = { _id: 'person-x', type: DocType.person, name: 'Green Hospital' };
+    const hospitalDoc = { _id: 'hospital-x', type: 'hospital', name: 'Green Hospital' };
+    const centerDoc = { _id: 'center-x', type: 'center', name: 'Green Health Center' };
+    const clinicDoc = { _id: 'clinic-x', type: 'clinic', name: 'Green Clinic' };
+    const unitDoc = { _id: 'unit-x', type: 'unit', name: 'Green Unit' };
+    const houseDoc = { _id: 'house-x', type: 'house', name: 'Green House' };
 
     const designs = [
       { amount: 2, getDoc: () => reportDoc },
@@ -138,9 +138,9 @@ describe('Docs', () => {
   });
 
   it('should create docs based on the doc design and not override parent object', async () => {
-    const hospitalDoc = { _id: 'hospital-x', type: 'hospital', name: 'Green Hospital' }
-    const centerDoc = { _id: 'center-x', type: 'center', name: 'Green Health Center' }
-    const unitDoc = { _id: 'unit-x', type: 'unit', name: 'Green Unit' }
+    const hospitalDoc = { _id: 'hospital-x', type: 'hospital', name: 'Green Hospital' };
+    const centerDoc = { _id: 'center-x', type: 'center', name: 'Green Health Center' };
+    const unitDoc = { _id: 'unit-x', type: 'unit', name: 'Green Unit' };
 
     const designs = [
       {
@@ -213,7 +213,7 @@ describe('Docs', () => {
       {
         amount: 2,
         getDoc: () => ({ _id: '124', type: 'clinic' }),
-        // @ts-ignore
+        // @ts-expect-error children property is not on type
         children: [ { amount: 3 }, { getDoc: () => {} } ],
       },
     ];
@@ -226,8 +226,8 @@ describe('Docs', () => {
 
     resetHistory();
     designs = [{
-        amount: 0,
-        getDoc: () => ({ _id: '124', type: 'clinic' }),
+      amount: 0,
+      getDoc: () => ({ _id: '124', type: 'clinic' }),
     }];
 
     await Promise.all(Docs.createDocs(designs));
@@ -275,7 +275,7 @@ describe('Docs', () => {
       expect(axiosPostStub.calledTwice).to.be.true;
       expect(consoleErrorStub.calledOnce).to.be.true;
       expect(consoleErrorStub.args[0]).to.have.members([ 'Failed saving docs ::>', error ]);
-      expect(axiosPostStub.args[0][0]).to.contain('/_bulk_docs')
+      expect(axiosPostStub.args[0][0]).to.contain('/_bulk_docs');
       expect(axiosPostStub.args[0][1]).to.deep.equal({
         docs: Array(2).fill({ _id: '888', type: 'ward-a', parent: undefined }),
       });
