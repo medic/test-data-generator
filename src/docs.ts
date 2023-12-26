@@ -82,10 +82,7 @@ export class Docs {
   private static getParentAssociationData(doc, parentDoc: Doc) {
     if (doc.type === DocType.dataRecord) {
       const dataRecordParent = doc.contact || parentDoc;
-      if (!dataRecordParent) {
-        return {};
-      }
-      return this.populateDataRecordParentData(doc, dataRecordParent);
+      return dataRecordParent ? this.populateDataRecordParentData(doc, dataRecordParent) : {};
     }
     const contactParent = doc.parent || parentDoc;
     if (!contactParent) {
