@@ -84,7 +84,6 @@ See the [sample-designs](./sample-designs) folder for more examples.
 
 ## Knows and TODOs
 
-- Make the tool a CLI and read the path from a custom-design.ts script.
 - Make test data samples for CHT's "default" config so we can use copy from there as a base. 
 - Make a `getContact(doc._id)` function, to get an existing contact's information (name, etc.) and use it in new test data (right we need to hard code existing contact information).
 
