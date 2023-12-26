@@ -9,6 +9,7 @@
     "node": ">=16.0.0"
   },
   "scripts": {
+    "test": "mocha",
     "lint": "eslint src/**/*.ts",
     "build": "npm run lint && tsc",
     "generate": "npm run build && echo 'Processing, please wait.' && node built/."
@@ -26,10 +27,17 @@
   },
   "devDependencies": {
     "@medic/eslint-config": "^1.1.0",
+    "@types/chai": "^4.3.11",
+    "@types/mocha": "^10.0.6",
     "@types/node": "^20.10.4",
+    "@types/sinon": "^17.0.2",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
     "@typescript-eslint/parser": "^6.13.2",
+    "chai": "^4.3.10",
     "eslint": "^8.55.0",
+    "mocha": "^10.2.0",
+    "sinon": "^17.0.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }
 }
