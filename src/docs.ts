@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { v4 as uuid } from 'uuid';
 import { DocType, Parent, Doc } from './doc-design.js';
 
 export class Docs {
@@ -27,8 +27,9 @@ export class Docs {
           return {
             design,
             doc: {
+              _id: uuid(),
               ...doc,
-              parent: Docs.createParentRelation(doc.parent || parentDoc)
+              ...Docs.getParentAssociationData(doc, parentDoc)
             },
           };
         });
@@ -53,5 +54,40 @@ export class Docs {
     }
 
     return parent;
+  }
+
+  private static getPatientPlaceIdentifiers(parentDoc: Doc) {
+    if (parentDoc.type === DocType.person || parentDoc.contact_type === DocType.person) {
+      return {
+        patient_id: parentDoc.patient_id,
+        patient_uuid: parentDoc._id,
+      };
+    }
+    return {
+      place_id: parentDoc.place_id,
+      place_uuid: parentDoc._id,
+    };
+  }
+
+  private static populateDataRecordParentData(doc, parentDoc: Doc) {
+    return {
+      contact: this.createParentRelation(parentDoc),
+      fields: {
+        ...this.getPatientPlaceIdentifiers(parentDoc),
+        ...doc.fields,
+      }
+    };
+  }
+
+  private static getParentAssociationData(doc, parentDoc: Doc) {
+    if (doc.type === DocType.dataRecord) {
+      const dataRecordParent = doc.contact || parentDoc;
+      return dataRecordParent ? this.populateDataRecordParentData(doc, dataRecordParent) : {};
+    }
+    const contactParent = doc.parent || parentDoc;
+    if (!contactParent) {
+      return {};
+    }
+    return { parent: this.createParentRelation(contactParent) };
   }
 }

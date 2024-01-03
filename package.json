@@ -10,7 +10,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "lint": "eslint src/**/*.ts",
+    "lint": "eslint .",
     "build": "npm run lint && tsc",
     "generate": "npm run build && echo 'Processing, please wait.' && node built/."
   },
@@ -26,6 +26,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@medic/eslint-config": "^1.1.0",
     "@types/chai": "^4.3.11",
     "@types/mocha": "^10.0.6",
     "@types/node": "^20.10.4",

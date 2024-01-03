@@ -20,12 +20,12 @@ describe('Docs', () => {
 
   it('should create docs based on the doc design', async () => {
     const reportDoc = { _id: 'report-x', form: 'pregnancy_danger_sign', type: DocType.dataRecord };
-    const personDoc = { _id: 'person-x', type: DocType.person, name: 'Green Hospital' }
-    const hospitalDoc = { _id: 'hospital-x', type: 'hospital', name: 'Green Hospital' }
-    const centerDoc = { _id: 'center-x', type: 'center', name: 'Green Health Center' }
-    const clinicDoc = { _id: 'clinic-x', type: 'clinic', name: 'Green Clinic' }
-    const unitDoc = { _id: 'unit-x', type: 'unit', name: 'Green Unit' }
-    const houseDoc = { _id: 'house-x', type: 'house', name: 'Green House' }
+    const personDoc = { _id: 'person-x', type: DocType.person, name: 'Green Hospital' };
+    const hospitalDoc = { _id: 'hospital-x', type: 'hospital', name: 'Green Hospital' };
+    const centerDoc = { _id: 'center-x', type: 'center', name: 'Green Health Center' };
+    const clinicDoc = { _id: 'clinic-x', type: 'clinic', name: 'Green Clinic' };
+    const unitDoc = { _id: 'unit-x', type: 'unit', name: 'Green Unit' };
+    const houseDoc = { _id: 'house-x', type: 'house', name: 'Green House' };
 
     const designs = [
       { amount: 2, getDoc: () => reportDoc },
@@ -74,10 +74,10 @@ describe('Docs', () => {
     expect(axiosPostStub.callCount).to.equal(12);
     axiosPostStub.args.forEach(call => expect(call[0]).to.contain('/_bulk_docs'));
     expect(axiosPostStub.args[0][1]).to.deep.equal({
-      docs: Array(2).fill({ ...reportDoc, parent: undefined }),
+      docs: Array(2).fill({ ...reportDoc }),
     });
     expect(axiosPostStub.args[1][1]).to.deep.equal({
-      docs: [{ ...hospitalDoc, parent: undefined }],
+      docs: [{ ...hospitalDoc }],
     });
 
     expect(axiosPostStub.args[2][1]).to.deep.equal({
@@ -138,9 +138,9 @@ describe('Docs', () => {
   });
 
   it('should create docs based on the doc design and not override parent object', async () => {
-    const hospitalDoc = { _id: 'hospital-x', type: 'hospital', name: 'Green Hospital' }
-    const centerDoc = { _id: 'center-x', type: 'center', name: 'Green Health Center' }
-    const unitDoc = { _id: 'unit-x', type: 'unit', name: 'Green Unit' }
+    const hospitalDoc = { _id: 'hospital-x', type: 'hospital', name: 'Green Hospital' };
+    const centerDoc = { _id: 'center-x', type: 'center', name: 'Green Health Center' };
+    const unitDoc = { _id: 'unit-x', type: 'unit', name: 'Green Unit' };
 
     const designs = [
       {
@@ -170,7 +170,7 @@ describe('Docs', () => {
     expect(axiosPostStub.callCount).to.equal(7);
     axiosPostStub.args.forEach(call => expect(call[0]).to.contain('/_bulk_docs'));
     expect(axiosPostStub.args[0][1]).to.deep.equal({
-      docs: [{ ...hospitalDoc, parent: undefined }],
+      docs: [{ ...hospitalDoc }],
     });
     expect(axiosPostStub.args[1][1]).to.deep.equal({
       docs: Array(3).fill({ ...centerDoc, parent: { _id: '007' } }),
@@ -194,6 +194,118 @@ describe('Docs', () => {
     });
   });
 
+  it('should generate _id value if none is provided', async () => {
+    const hospitalDoc = { type: 'hospital', name: 'Green Hospital' };
+    const designs = [{ amount: 1, getDoc: () => hospitalDoc },];
+
+    await Promise
+      .all(Docs.createDocs(designs))
+      .catch(() => assert('Should have not thrown error.'));
+
+    expect(axiosPostStub.callCount).to.equal(1);
+    const actualDoc = axiosPostStub.args[0][1].docs[0];
+    expect(actualDoc).to.deep.include(hospitalDoc);
+    expect(actualDoc._id).to.be.a('string');
+  });
+
+  it('should auto-populate parent linkage fields when writing new contacts', async () => {
+    const greatGrandParent = { _id: 'greatGrandParentUUID', type: 'district_hospital' };
+    const grandParent = { _id: 'grandParentUUID', type: 'health_center' };
+    const parent = { _id: 'parentUUID', type: 'clinic' };
+    const doc = { _id: 'doc-x', type: DocType.person };
+    const designs = [{
+      amount: 1,
+      getDoc: () => greatGrandParent,
+      children: [
+        {
+          amount: 1,
+          getDoc: () => grandParent,
+          children: [
+            {
+              amount: 1,
+              getDoc: () => parent,
+              children: [{ amount: 1, getDoc: () => doc } ],
+            },
+          ],
+        },
+      ],
+    }];
+
+    await Promise
+      .all(Docs.createDocs(designs))
+      .catch(() => assert('Should have not thrown error.'));
+
+    expect(axiosPostStub.callCount).to.equal(4);
+    expect(axiosPostStub.args[0][1]).to.deep.equal({ docs: [greatGrandParent] });
+    expect(axiosPostStub.args[1][1]).to.deep.equal({ docs: [{
+      ...grandParent,
+      parent: { _id: greatGrandParent._id }
+    }] });
+    expect(axiosPostStub.args[2][1]).to.deep.equal({ docs: [{
+      ...parent,
+      parent: { _id: grandParent._id, parent: { _id: greatGrandParent._id } }
+    }] });
+    expect(axiosPostStub.args[3][1]).to.deep.equal({ docs: [{
+      ...doc,
+      parent: { _id: parent._id, parent: { _id: grandParent._id } }
+    }] });
+  });
+
+  it('should use provided data to populate contact parent linkage fields', async () => {
+    const parent = { _id: 'parentUUID', type: 'clinic' };
+    const doc = { _id: 'doc-x', type: DocType.person, parent: { _id: 'otherParent' } };
+    const designs = [{
+      amount: 1,
+      getDoc: () => parent,
+      children: [{ amount: 1, getDoc: () => doc } ],
+    }];
+
+    await Promise
+      .all(Docs.createDocs(designs))
+      .catch(() => assert('Should have not thrown error.'));
+
+    expect(axiosPostStub.callCount).to.equal(2);
+    expect(axiosPostStub.args[0][1]).to.deep.equal({ docs: [parent] });
+    expect(axiosPostStub.args[1][1]).to.deep.equal({ docs: [doc] });
+  });
+
+  [
+    [{ type: DocType.person }, { patient_id: 'patientID', patient_uuid: 'parentUUID' }],
+    [{ type: 'contact', contact_type: DocType.person }, { patient_id: 'patientID', patient_uuid: 'parentUUID' }],
+    [{ type: 'district_hospital' }, { place_id: 'placeID', place_uuid: 'parentUUID' }],
+    [{ type: 'contact', contact_type: 'custom_place' }, { place_id: 'placeID', place_uuid: 'parentUUID' }],
+  ].forEach(([parentTypeData, expectedFields]) => {
+    it('should auto-populate data_record parent linkage fields', async () => {
+      const parent = {
+        _id: 'parentUUID',
+        patient_id: 'patientID',
+        place_id: 'placeID',
+        ...parentTypeData
+      };
+      const doc = { _id: 'doc-x', type: DocType.dataRecord, fields: { hello: 'world' } };
+      const designs = [{
+        amount: 1,
+        getDoc: () => parent,
+        children: [{ amount: 1, getDoc: () => doc } ],
+      }];
+
+      await Promise
+        .all(Docs.createDocs(designs))
+        .catch(() => assert('Should have not thrown error.'));
+
+      expect(axiosPostStub.callCount).to.equal(2);
+      expect(axiosPostStub.args[0][1]).to.deep.equal({ docs: [parent] });
+      expect(axiosPostStub.args[1][1]).to.deep.equal({ docs: [{
+        ...doc,
+        contact: { _id: parent._id },
+        fields: {
+          ...doc.fields,
+          ...expectedFields
+        }
+      }] });
+    });
+  });
+
   it('should warn if amount or getDoc are missing', async () => {
     let designs = [
       {},
@@ -213,7 +325,7 @@ describe('Docs', () => {
       {
         amount: 2,
         getDoc: () => ({ _id: '124', type: 'clinic' }),
-        // @ts-ignore
+        // @ts-expect-error children property is not on type
         children: [ { amount: 3 }, { getDoc: () => {} } ],
       },
     ];
@@ -226,8 +338,8 @@ describe('Docs', () => {
 
     resetHistory();
     designs = [{
-        amount: 0,
-        getDoc: () => ({ _id: '124', type: 'clinic' }),
+      amount: 0,
+      getDoc: () => ({ _id: '124', type: 'clinic' }),
     }];
 
     await Promise.all(Docs.createDocs(designs));
@@ -275,7 +387,7 @@ describe('Docs', () => {
       expect(axiosPostStub.calledTwice).to.be.true;
       expect(consoleErrorStub.calledOnce).to.be.true;
       expect(consoleErrorStub.args[0]).to.have.members([ 'Failed saving docs ::>', error ]);
-      expect(axiosPostStub.args[0][0]).to.contain('/_bulk_docs')
+      expect(axiosPostStub.args[0][0]).to.contain('/_bulk_docs');
       expect(axiosPostStub.args[0][1]).to.deep.equal({
         docs: Array(2).fill({ _id: '888', type: 'ward-a', parent: undefined }),
       });

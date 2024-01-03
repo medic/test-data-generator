@@ -1,7 +1,12 @@
 import { Docs } from './docs.js';
-// TODO: Read design script from CLI
-import { CustomDesign } from './custom-design.js';
+import * as path from 'node:path';
+import { DocDesign } from './doc-design.js';
+import { getContext } from './design-context.js';
 
-(function() {
-  Docs.createDocs(new CustomDesign().getDesign());
+(async function() {
+  const args = process.argv.slice(2);
+  const designScriptPath = path.resolve(args[0]);
+  const getDesign: DocDesign = (await import(designScriptPath)).default;
+  const context= getContext();
+  Docs.createDocs(getDesign(context));
 })();
