@@ -1,43 +1,24 @@
 import { expect } from 'chai';
 import * as Sinon from 'sinon';
 import { restore, stub } from 'sinon';
-import { getContext } from '../src/design-context.js';
+import { context } from '../src/design-context.js';
+import { environment } from '../src/environment.js';
 
 describe('DesignContext', () => {
-  let couchURL: string;
-  let consoleErrorStub: Sinon.SinonStub;
+  let getUsernameStub: Sinon.SinonStub;
 
-  before(() => couchURL = process.env.COUCH_URL);
-  after(() => process.env.COUCH_URL = couchURL);
-
-  beforeEach(() => consoleErrorStub = stub(console, 'error'));
+  beforeEach(() => getUsernameStub = stub(environment, 'getUsername'));
   afterEach(() => restore());
 
-  [
-    'http://admin:password@localhost:5984',
-    'https://admin:password@localhost:5984',
-  ].forEach(couchURL => {
-    it(`should include username from COUCH_URL (${couchURL})`, async () => {
-      process.env.COUCH_URL = couchURL;
-
-      const context = getContext();
-
-      expect(context).to.deep.equal({ username: 'admin' });
-    });
+  it('should return a context with the username when getUsername returns a username', () => {
+    getUsernameStub.returns('admin');
+    const designContext = context.get();
+    expect(designContext).to.deep.equal({ username: 'admin' });
   });
 
-  [
-    'http://localhost:5984',
-    null
-  ].forEach(couchURL => {
-    it('should include null username when not included in COUCH_URL', async () => {
-      process.env.COUCH_URL = couchURL;
-
-      const context = getContext();
-
-      expect(context).to.deep.equal({ username: null });
-      expect(consoleErrorStub.calledOnce).to.be.true;
-      expect(consoleErrorStub.args[0]).to.deep.equal(['Failed to parse username from COUCH_URL.']);
-    });
+  it('should return a context with null username when getUsername returns null', () => {
+    getUsernameStub.returns(null);
+    const designContext = context.get();
+    expect(designContext).to.deep.equal({ username: null });
   });
 });

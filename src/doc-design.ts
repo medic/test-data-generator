@@ -20,13 +20,18 @@ export type DocDesign = (context: DesignContext) => DesignSpec[];
  */
 export interface DesignSpec {
   /**
-   * The number of documents of this type to generate. This also servers as the batch size of docs to upload.
+   * Required. The number of documents of this type to generate. This also servers as the batch size of docs to upload.
    */
   amount: number;
 
   /**
-   * Returns the document to generate. If no `_id` value is provided, one will be generated automatically. This
-   * function is call the number of times defined in the `amount` property.
+   * The database to upload the generated documents to. Defaults to `medic`.
+   */
+  db?: string;
+
+  /**
+   * Required. Returns the document to generate. If no `_id` value is provided, one will be generated automatically.
+   * This function is called the number of times defined in the `amount` property.
    * @returns the document to generate
    */
   getDoc(): Doc;
