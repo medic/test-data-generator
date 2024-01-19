@@ -4,6 +4,7 @@ import { stub, restore, resetHistory } from 'sinon';
 
 import { Docs } from '../src/docs.js';
 import { DocType } from '../src/doc-design.js';
+import { environment } from '../src/environment.js';
 
 describe('Docs', () => {
   let axiosPostStub;
@@ -11,6 +12,7 @@ describe('Docs', () => {
   let consoleWarnStub;
 
   beforeEach(() => {
+    stub(environment, 'getChtUrl').returns('http://localhost:5988');
     axiosPostStub = stub(axios, 'post').resolves();
     consoleErrorStub = stub(console, 'error');
     consoleWarnStub = stub(console, 'warn');
