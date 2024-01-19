@@ -4,7 +4,7 @@ const getChtUrl = () => {
   }
   const match = /(https?:\/\/[^/]+)/i.exec(process.env.COUCH_URL);
   if (!match) {
-    throw new Error('Failed to parse COUCH_URL.');
+    throw new Error(`Failed to parse COUCH_URL [${process.env.COUCH_URL}].`);
   }
   return match[1];
 };
@@ -12,7 +12,7 @@ const getChtUrl = () => {
 const getUsername = () => {
   const match = /https?:\/\/(.*):.*@.*/.exec(getChtUrl());
   if (!match) {
-    console.error('Failed to parse username from COUCH_URL.');
+    console.error(`Failed to parse username from COUCH_URL [${getChtUrl()}].`);
     return null;
   }
   return match[1];

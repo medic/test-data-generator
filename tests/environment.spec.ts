@@ -27,7 +27,7 @@ describe('environment', () => {
     ].forEach(couchURL => {
       it('should throw an error when COUCH_URL does not match the expected format', () => {
         process.env.COUCH_URL = couchURL;
-        expect(environment.getChtUrl).to.throw('Failed to parse COUCH_URL.');
+        expect(environment.getChtUrl).to.throw(`Failed to parse COUCH_URL [${couchURL}].`);
       });
     });
 
@@ -62,7 +62,8 @@ describe('environment', () => {
       const context = environment.getUsername();
       expect(context).to.be.null;
       expect(consoleErrorStub.calledOnce).to.be.true;
-      expect(consoleErrorStub.args[0]).to.deep.equal(['Failed to parse username from COUCH_URL.']);
+      expect(consoleErrorStub.args[0]).to.deep
+        .equal([`Failed to parse username from COUCH_URL [${environment.getChtUrl()}].`]);
     });
   });
 });
