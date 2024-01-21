@@ -33,11 +33,12 @@ const getPerson = (context, role) => {
   };
 };
 
-const getPregnancyDangerSign = () => {
+const getPregnancyDangerSign = (contact) => {
   return {
     form: 'pregnancy_danger_sign',
     type: 'data_record',
     content_type: 'xml',
+    contact: { ...contact },
     reported_date: faker.date.recent({ days: 5 }).getTime(),
     fields: {
       patient_age_in_years: 34,
@@ -73,19 +74,19 @@ export default (context) => {
   return [
     {
       amount: 1,
+      contact: { _id: DISTRICT_HOSPITAL_UUID },
       getDoc: () => {
         return {
           ...getPerson(context, 'chw_supervisor'),
-          parent: { _id: DISTRICT_HOSPITAL_UUID }
         };
       },
     },
     {
       amount: 1,
-      getDoc: () => {
+      contact: { _id: PATIENT_UUID },
+      getDoc: (contact) => {
         return {
-          ...getPregnancyDangerSign(),
-          contact: { _id: PATIENT_UUID }
+          ...getPregnancyDangerSign(contact),
         };
       },
     }

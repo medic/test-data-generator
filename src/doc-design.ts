@@ -30,6 +30,11 @@ export interface DesignSpec {
   db?: string;
 
   /**
+   * Optional. Contact Doc that will be passed to getDoc function to use as need it.
+   */
+  contact?: Doc;
+
+  /**
    * Required. Returns the document to generate. If no `_id` value is provided, one will be generated automatically.
    * This function is called the number of times defined in the `amount` property.
    * @returns the document to generate

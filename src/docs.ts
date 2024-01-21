@@ -25,12 +25,13 @@ export class Docs {
         .fill(null)
         .map(() => {
           const doc = design.getDoc();
+          const parent = Docs.getParentAssociationData(doc, parentDoc || designs.contact);
           return {
             design,
             doc: {
               _id: uuid(),
               ...doc,
-              ...Docs.getParentAssociationData(doc, parentDoc)
+              ...parent
             },
           };
         });
