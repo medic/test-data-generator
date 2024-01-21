@@ -4,6 +4,7 @@ import { stub, restore, resetHistory } from 'sinon';
 
 import { Docs } from '../src/docs.js';
 import { DocType } from '../src/doc-design.js';
+import { environment } from '../src/environment.js';
 
 describe('Docs', () => {
   let axiosPostStub;
@@ -11,6 +12,7 @@ describe('Docs', () => {
   let consoleWarnStub;
 
   beforeEach(() => {
+    stub(environment, 'getChtUrl').returns('http://localhost:5988');
     axiosPostStub = stub(axios, 'post').resolves();
     consoleErrorStub = stub(console, 'error');
     consoleWarnStub = stub(console, 'warn');
@@ -28,7 +30,7 @@ describe('Docs', () => {
     const houseDoc = { _id: 'house-x', type: 'house', name: 'Green House' };
 
     const designs = [
-      { amount: 2, getDoc: () => reportDoc },
+      { amount: 2, db: 'medic-users-meta', getDoc: () => reportDoc },
       {
         amount: 1,
         getDoc: () => hospitalDoc,
@@ -72,7 +74,8 @@ describe('Docs', () => {
       .catch(() => assert('Should have not thrown error.'));
 
     expect(axiosPostStub.callCount).to.equal(12);
-    axiosPostStub.args.forEach(call => expect(call[0]).to.contain('/_bulk_docs'));
+    expect(axiosPostStub.args[0][0]).to.contain('/medic-users-meta/_bulk_docs');
+    axiosPostStub.args.slice(1).forEach(call => expect(call[0]).to.contain('/medic/_bulk_docs'));
     expect(axiosPostStub.args[0][1]).to.deep.equal({
       docs: Array(2).fill({ ...reportDoc }),
     });

@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { v4 as uuid } from 'uuid';
 import { DocType, Parent, Doc } from './doc-design.js';
+import { environment } from './environment.js';
 
 export class Docs {
-  private static async saveDocs(docs) {
-    const path = `${process.env.COUCH_URL}/_bulk_docs`;
+  private static async saveDocs(docs, dbName = 'medic') {
+    const path = `${environment.getChtUrl()}/${dbName}/_bulk_docs`;
     try {
       await axios.post(path, { docs });
       console.info(`Successfully saved ${docs.length} docs.`);
@@ -34,7 +35,7 @@ export class Docs {
           };
         });
 
-      const parentDocsPromise = Docs.saveDocs(batch.map(entity => entity.doc));
+      const parentDocsPromise = Docs.saveDocs(batch.map(entity => entity.doc), design.db);
       return parentDocsPromise.then(() => Promise.all(
         batch
           .filter(entity => entity.doc.type !== DocType.dataRecord && entity.design.children)

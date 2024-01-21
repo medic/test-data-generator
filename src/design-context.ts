@@ -1,14 +1,6 @@
 import { DesignContext } from './doc-design.js';
+import { environment } from './environment.js';
 
-const getUsername = () => {
-  const parseUserNameFromURL = /https?:\/\/(.*):.*@.*/;
-  const couchURL = process.env.COUCH_URL;
-  const match = parseUserNameFromURL.exec(couchURL);
-  if (!match) {
-    console.error('Failed to parse username from COUCH_URL.');
-    return null;
-  }
-  return match[1];
+export const context = {
+  get: (): DesignContext => ({ username: environment.getUsername() })
 };
-
-export const getContext = (): DesignContext => ({ username: getUsername() });
