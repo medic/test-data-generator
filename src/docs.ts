@@ -4,20 +4,20 @@ import { DocType, Parent, Doc } from './doc-design.js';
 import { environment } from './environment.js';
 
 export class Docs {
-  private static async saveDocs(docs, dbName = 'medic') {
+  private static async saveDocs(docs, dbName = 'medic', batchId) {
     const path = `${environment.getChtUrl()}/${dbName}/_bulk_docs`;
     try {
       await axios.post(path, { docs });
-      console.info(`Successfully saved ${docs.length} docs.`);
+      console.info(`Successfully saved ${docs.length} docs from ${batchId}.`);
     } catch (error) {
-      console.error('Failed saving docs ::>', error);
+      console.error(`Failed saving docs from ${batchId}. Errors: `, error.message || error.errors || error);
     }
   }
 
   static createDocs(designs, parentDoc?: Doc) {
     return designs.map(design => {
       if (!design.amount || !design.getDoc) {
-        console.warn('Remember to set the "amount" and the "getDoc".');
+        console.warn(`Remember to set the "amount" and the "getDoc" in ${design.id}.`);
         return;
       }
 
@@ -35,7 +35,7 @@ export class Docs {
           };
         });
 
-      const parentDocsPromise = Docs.saveDocs(batch.map(entity => entity.doc), design.db);
+      const parentDocsPromise = Docs.saveDocs(batch.map(entity => entity.doc), design.db, design.id);
       return parentDocsPromise.then(() => Promise.all(
         batch
           .filter(entity => entity.doc.type !== DocType.dataRecord && entity.design.children)

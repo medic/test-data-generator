@@ -72,6 +72,7 @@ const PATIENT_UUID = '56bfecd7-7f14-4e74-8103-d227400b28ce';
 export default (context) => {
   return [
     {
+      id: 'chw-supervisor',
       amount: 1,
       getDoc: () => {
         return {
@@ -81,6 +82,7 @@ export default (context) => {
       },
     },
     {
+      id:'pregnancy-danger-report',
       amount: 1,
       getDoc: () => {
         return {
