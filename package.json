@@ -1,6 +1,6 @@
 {
   "name": "test-data-generator",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Tool to upload test data into CHT test instances.",
   "type": "module",
   "main": "built/index.js",
