@@ -44,17 +44,21 @@ export class Docs {
     });
   }
 
-  private static createParentRelation(parentDoc: Doc): Parent {
+  private static createParentRelation(parentDoc: Doc | Parent): Parent {
     if (!parentDoc) {
       return;
     }
 
-    const parent: Parent = { _id: parentDoc._id };
-    if (parentDoc.parent) {
-      parent.parent = { _id: parentDoc.parent._id };
+    const result: Parent = { _id: parentDoc._id };
+    let minified: Parent = result;
+
+    while (parentDoc.parent) {
+      minified.parent = { _id: parentDoc.parent._id };
+      minified = minified.parent;
+      parentDoc = parentDoc.parent;
     }
 
-    return parent;
+    return result;
   }
 
   private static getPatientPlaceIdentifiers(parentDoc: Doc) {
