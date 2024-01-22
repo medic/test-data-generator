@@ -32,9 +32,10 @@ export interface DesignSpec {
   /**
    * Required. Returns the document to generate. If no `_id` value is provided, one will be generated automatically.
    * This function is called the number of times defined in the `amount` property.
+   * @param args.parent the newly created parent document if one exists, otherwise undefined
    * @returns the document to generate
    */
-  getDoc(): Doc;
+  getDoc(args: { parent?: Doc }): Doc;
 
   /**
    * Defines the children documents that should be created for the current document type. These children will be

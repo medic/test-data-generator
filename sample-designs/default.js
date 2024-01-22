@@ -61,7 +61,7 @@ const getWoman = context => getPerson(context, 'patient', { sex: 'female', ageRa
 const getChild = context => getPerson(context, 'patient', { ageRange: { min: 0, max: 14 } });
 const getInfant = context => getPerson(context, 'patient', { ageRange: { min: 0, max: 1 } });
 
-const getPregnancyDangerSign = () => {
+const getPregnancyDangerSign = (patient) => {
   return {
     form: 'pregnancy_danger_sign',
     type: 'data_record',
@@ -69,7 +69,7 @@ const getPregnancyDangerSign = () => {
     reported_date: faker.date.recent({ days: 5 }).getTime(),
     fields: {
       patient_age_in_years: 34,
-      patient_name: 'Erick Loral',
+      patient_name: patient.name,
       t_danger_signs_referral_follow_up_date: faker.date.recent({ days: 5 }).toISOString(),
       t_danger_signs_referral_follow_up: 'yes', // Intentionally 'yes'
       danger_signs: {
@@ -114,7 +114,7 @@ export default (context) => {
                   children: [
                     {
                       amount: 1,
-                      getDoc: () => getPregnancyDangerSign(),
+                      getDoc: ({parent}) => getPregnancyDangerSign(parent),
                     }
                   ]
                 },
