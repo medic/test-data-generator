@@ -15,9 +15,13 @@ export class Docs {
   }
 
   static createDocs(designs, parentDoc?: Doc) {
-    return designs.map(design => {
+    return designs.map((design, index) => {
+      if (!design.designId) {
+        design.designId = index;
+      }
+
       if (!design.amount || !design.getDoc) {
-        console.warn(`Remember to set the "amount" and the "getDoc" in ${design.id}.`);
+        console.warn(`Remember to set the "amount" and the "getDoc" in ${design.designId}.`);
         return;
       }
 
@@ -35,7 +39,7 @@ export class Docs {
           };
         });
 
-      const parentDocsPromise = Docs.saveDocs(batch.map(entity => entity.doc), design.db, design.id);
+      const parentDocsPromise = Docs.saveDocs(batch.map(entity => entity.doc), design.db, design.designId);
       return parentDocsPromise.then(() => Promise.all(
         batch
           .filter(entity => entity.doc.type !== DocType.dataRecord && entity.design.children)

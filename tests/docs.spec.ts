@@ -30,21 +30,21 @@ describe('Docs', () => {
     const houseDoc = { _id: 'house-x', type: 'house', name: 'Green House' };
 
     const designs = [
-      { id: 'design-1', amount: 2, db: 'medic-users-meta', getDoc: () => reportDoc },
+      { designId: 'design-1', amount: 2, db: 'medic-users-meta', getDoc: () => reportDoc },
       {
-        id: 'design-2',
+        designId: 'design-2',
         amount: 1,
         getDoc: () => hospitalDoc,
         children: [
           {
-            id: 'design-2-1',
+            designId: 'design-2-1',
             amount: 1,
             getDoc: () => unitDoc,
             children: [
-              { id: 'design-2-1-1', amount: 3, getDoc: () => clinicDoc },
-              { id: 'design-2-1-2', amount: 3, getDoc: () => personDoc },
+              { designId: 'design-2-1-1', amount: 3, getDoc: () => clinicDoc },
+              { designId: 'design-2-1-2', amount: 3, getDoc: () => personDoc },
               {
-                id: 'design-2-1-3',
+                designId: 'design-2-1-3',
                 amount: 1,
                 getDoc: () => houseDoc,
                 children: [
@@ -150,24 +150,24 @@ describe('Docs', () => {
 
     const designs = [
       {
-        id: 'design-1',
+        designId: 'design-1',
         amount: 1,
         getDoc: () => hospitalDoc,
         children: [
-          { id: 'design-1-1', amount: 4, getDoc: () => unitDoc },
+          { designId: 'design-1-1', amount: 4, getDoc: () => unitDoc },
           {
-            id: 'design-1-2',
+            designId: 'design-1-2',
             amount: 13,
             getDoc: () => ({ ...centerDoc, parent: { _id: '009' } }),
           },
         ],
       },
       {
-        id: 'design-2',
+        designId: 'design-2',
         amount: 3,
         getDoc: () => ({ ...centerDoc, parent: { _id: '007' } }),
         children: [
-          { id: 'design-2-1', amount: 7, getDoc: () => unitDoc }
+          { designId: 'design-2-1', amount: 7, getDoc: () => unitDoc }
         ],
       },
     ];
@@ -205,7 +205,7 @@ describe('Docs', () => {
 
   it('should generate _id value if none is provided', async () => {
     const hospitalDoc = { type: 'hospital', name: 'Green Hospital' };
-    const designs = [{ id: 'design-1', amount: 1, getDoc: () => hospitalDoc },];
+    const designs = [{ designId: 'design-1', amount: 1, getDoc: () => hospitalDoc },];
 
     await Promise
       .all(Docs.createDocs(designs))
@@ -264,7 +264,7 @@ describe('Docs', () => {
     const parent = { _id: 'parentUUID', type: 'clinic' };
     const doc = { _id: 'doc-x', type: DocType.person, parent: { _id: 'otherParent' } };
     const designs = [{
-      id: 'design-1',
+      designId: 'design-1',
       amount: 1,
       getDoc: () => parent,
       children: [{ amount: 1, getDoc: () => doc } ],
@@ -318,8 +318,8 @@ describe('Docs', () => {
 
   it('should warn if amount or getDoc are missing', async () => {
     let designs = [
-      { id: 'design-1' },
-      { id: 'design-2', amount: 2, getDoc: () => ({ _id: '124', type: 'hospital' }) },
+      { designId: 'design-1' },
+      { designId: 'design-2', amount: 2, getDoc: () => ({ _id: '124', type: 'hospital' }) },
     ];
 
     await Promise
@@ -333,11 +333,11 @@ describe('Docs', () => {
     resetHistory();
     designs = [
       {
-        id: 'design-1',
+        designId: 'design-1',
         amount: 2,
         getDoc: () => ({ _id: '124', type: 'clinic' }),
         // @ts-expect-error children property is not on type
-        children: [ { id: 'design-1-1', amount: 3 }, { id: 'design-1-2', getDoc: () => {} } ],
+        children: [ { designId: 'design-1-1', amount: 3 }, { designId: 'design-1-2', getDoc: () => {} } ],
       },
     ];
 
@@ -349,7 +349,7 @@ describe('Docs', () => {
 
     resetHistory();
     designs = [{
-      id: 'design-1',
+      designId: 'design-1',
       amount: 0,
       getDoc: () => ({ _id: '124', type: 'clinic' }),
     }];
@@ -363,7 +363,7 @@ describe('Docs', () => {
 
   it('should catch errors when saving docs', async () => {
     const designs = [
-      { id: 'design-1', amount: 2, getDoc: () => ({ _id: '124', type: 'hospital' }) },
+      { designId: 'design-1', amount: 2, getDoc: () => ({ _id: '124', type: 'hospital' }) },
     ];
     const error = new Error('Ups something happened');
     axiosPostStub.rejects(error);
@@ -378,12 +378,12 @@ describe('Docs', () => {
   it('should catch errors when saving docs, but continue saving other batches', async () => {
     const designs = [
       {
-        id: 'design-1',
+        designId: 'design-1',
         amount: 2,
         getDoc: () => ({ _id: '124', type: 'ward-b' })
       },
       {
-        id: 'design-2',
+        designId: 'design-2',
         amount: 2,
         getDoc: () => ({ _id: '888', type: 'ward-a' })
       },

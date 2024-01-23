@@ -97,46 +97,46 @@ const getPregnancyDangerSign = () => {
 export default (context) => {
   return [
     {
-      id: 'district-hospital',
+      designId: 'district-hospital',
       amount: 2,
       getDoc: () => getDistrictHospital(context),
       children: [
         {
-          id: 'health-center',
+          designId: 'health-center',
           amount: 2,
           getDoc: () => getHealthCenter(context),
           children: [
             {
-              id: 'household',
+              designId: 'household',
               amount: 2,
               getDoc: () => getHousehold(context),
               children: [
                 {
-                  id: 'woman-person',
+                  designId: 'woman-person',
                   amount: 1,
                   getDoc: () => getWoman(context),
                   children: [
                     {
-                      id: 'pregnancy-danger-report',
+                      designId: 'pregnancy-danger-report',
                       amount: 1,
                       getDoc: () => getPregnancyDangerSign(),
                     }
                   ]
                 },
-                { id: 'child-person', amount: 2, getDoc: () => getChild(context) },
-                { id: 'infant-person', amount: 1, getDoc: () => getInfant(context) },
-                { id: 'patient-person', amount: 2, getDoc: () => getPatient(context) }
+                { designId: 'child-person', amount: 2, getDoc: () => getChild(context) },
+                { designId: 'infant-person', amount: 1, getDoc: () => getInfant(context) },
+                { designId: 'patient-person', amount: 2, getDoc: () => getPatient(context) }
               ]
             },
             {
-              id: 'chw',
+              designId: 'chw',
               amount: 1,
               getDoc: () => getCHW(context),
             }
           ]
         },
         {
-          id: 'chw-supervisor',
+          designId: 'chw-supervisor',
           amount: 1,
           getDoc: () => getCHWSupervisor(context),
         }

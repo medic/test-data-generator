@@ -20,9 +20,9 @@ export type DocDesign = (context: DesignContext) => DesignSpec[];
  */
 export interface DesignSpec {
   /**
-   * Optional. Useful for debugging and to identify if the upload was successful or failed.
+   * Optional. Useful for debugging and to identify if the upload was successful or failed. Defaults to index in array.
    */
-  id?: string;
+  designId?: string;
 
   /**
    * Required. The number of documents of this type to generate. This also servers as the batch size of docs to upload.
