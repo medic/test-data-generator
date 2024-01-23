@@ -28,7 +28,7 @@ export class Docs {
       const batch = new Array(design.amount)
         .fill(null)
         .map(() => {
-          const doc = design.getDoc();
+          const doc = design.getDoc({ parent: parentDoc });
           return {
             design,
             doc: {

@@ -203,6 +203,30 @@ describe('Docs', () => {
     });
   });
 
+  it('should provide the parent doc value when getting a new doc from the design', async () => {
+    const hospitalDoc = { _id: 'hospital-x', type: 'hospital', name: 'Green Hospital' };
+    const getHospitalDoc = stub().returns(hospitalDoc);
+    const getCenterDoc = stub().returns({ _id: 'center-x', type: 'center', name: 'Green Health Center' });
+    const designs = [{
+      amount: 1,
+      getDoc: getHospitalDoc,
+      children: [{
+        amount: 1,
+        getDoc: getCenterDoc,
+      }]
+    },];
+
+    await Promise
+      .all(Docs.createDocs(designs))
+      .catch(() => assert('Should have not thrown error.'));
+
+    expect(axiosPostStub.callCount).to.equal(2);
+    expect(getHospitalDoc.calledOnce).to.be.true;
+    expect(getHospitalDoc.args[0][0]).to.deep.equal({ parent: undefined });
+    expect(getCenterDoc.calledOnce).to.be.true;
+    expect(getCenterDoc.args[0][0]).to.deep.equal({ parent: hospitalDoc });
+  });
+
   it('should generate _id value if none is provided', async () => {
     const hospitalDoc = { type: 'hospital', name: 'Green Hospital' };
     const designs = [{ designId: 'design-1', amount: 1, getDoc: () => hospitalDoc },];
