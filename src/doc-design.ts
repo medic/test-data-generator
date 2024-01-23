@@ -48,7 +48,7 @@ export interface DesignSpec {
 
 export interface Parent {
   _id: string,
-  parent?: Record<string, string>
+  parent?: Parent
 }
 
 export interface Doc {
