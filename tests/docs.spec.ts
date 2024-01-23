@@ -9,13 +9,11 @@ import { environment } from '../src/environment.js';
 describe('Docs', () => {
   let axiosPostStub;
   let consoleErrorStub;
-  let consoleWarnStub;
 
   beforeEach(() => {
     stub(environment, 'getChtUrl').returns('http://localhost:5988');
     axiosPostStub = stub(axios, 'post').resolves();
     consoleErrorStub = stub(console, 'error');
-    consoleWarnStub = stub(console, 'warn');
   });
 
   afterEach(() => restore());
@@ -72,8 +70,7 @@ describe('Docs', () => {
       },
     ];
 
-    await Promise
-      .all(Docs.createDocs(designs))
+    await Docs.createDocs(designs)
       .catch(() => assert.fail('Should have not thrown error.'));
 
     expect(axiosPostStub.callCount).to.equal(12);
@@ -85,36 +82,36 @@ describe('Docs', () => {
     expect(axiosPostStub.args[1][1]).to.deep.equal({
       docs: [{ ...hospitalDoc }],
     });
-
     expect(axiosPostStub.args[2][1]).to.deep.equal({
       docs: [{ ...unitDoc, parent: { _id: hospitalDoc._id } }],
     });
     expect(axiosPostStub.args[3][1]).to.deep.equal({
-      docs: [{ ...centerDoc, parent: { _id: hospitalDoc._id } }],
-    });
-    expect(axiosPostStub.args[4][1]).to.deep.equal({
-      docs: [{ ...personDoc, parent: { _id: hospitalDoc._id } }],
-    });
-
-    expect(axiosPostStub.args[5][1]).to.deep.equal({
       docs: Array(3).fill({
         ...clinicDoc,
         parent: { _id: unitDoc._id, parent: { _id: hospitalDoc._id } },
       }),
     });
-    expect(axiosPostStub.args[6][1]).to.deep.equal({
+    expect(axiosPostStub.args[4][1]).to.deep.equal({
       docs: Array(3).fill({
         ...personDoc,
         parent: { _id: unitDoc._id, parent: { _id: hospitalDoc._id } },
       }),
     });
-    expect(axiosPostStub.args[7][1]).to.deep.equal({
+    expect(axiosPostStub.args[5][1]).to.deep.equal({
       docs: [{
         ...houseDoc,
         parent: { _id: unitDoc._id, parent: { _id: hospitalDoc._id } },
       }],
     });
-
+    expect(axiosPostStub.args[6][1]).to.deep.equal({
+      docs: Array(2).fill({
+        ...personDoc,
+        parent: { _id: houseDoc._id, parent: { _id: unitDoc._id, parent: { _id: hospitalDoc._id } } },
+      }),
+    });
+    expect(axiosPostStub.args[7][1]).to.deep.equal({
+      docs: [{ ...centerDoc, parent: { _id: hospitalDoc._id } }],
+    });
     expect(axiosPostStub.args[8][1]).to.deep.equal({
       docs: Array(3).fill({
         ...personDoc,
@@ -127,19 +124,14 @@ describe('Docs', () => {
         parent: { _id: centerDoc._id, parent: { _id: hospitalDoc._id } },
       }],
     });
-
     expect(axiosPostStub.args[10][1]).to.deep.equal({
-      docs: Array(2).fill({
-        ...personDoc,
-        parent: { _id: houseDoc._id, parent: { _id: unitDoc._id, parent: { _id: hospitalDoc._id } } },
-      }),
-    });
-
-    expect(axiosPostStub.args[11][1]).to.deep.equal({
       docs: Array(10).fill({
         ...personDoc,
         parent: { _id: houseDoc._id, parent: { _id: centerDoc._id, parent: { _id: hospitalDoc._id } } },
       }),
+    });
+    expect(axiosPostStub.args[11][1]).to.deep.equal({
+      docs: [{ ...personDoc, parent: { _id: hospitalDoc._id } }],
     });
   });
 
@@ -172,8 +164,7 @@ describe('Docs', () => {
       },
     ];
 
-    await Promise
-      .all(Docs.createDocs(designs))
+    await Docs.createDocs(designs)
       .catch(() => assert.fail('Should have not thrown error.'));
 
     expect(axiosPostStub.callCount).to.equal(7);
@@ -182,16 +173,14 @@ describe('Docs', () => {
       docs: [{ ...hospitalDoc }],
     });
     expect(axiosPostStub.args[1][1]).to.deep.equal({
-      docs: Array(3).fill({ ...centerDoc, parent: { _id: '007' } }),
-    });
-
-    expect(axiosPostStub.args[2][1]).to.deep.equal({
       docs: Array(4).fill({ ...unitDoc, parent: { _id: hospitalDoc._id } }),
     });
-    expect(axiosPostStub.args[3][1]).to.deep.equal({
+    expect(axiosPostStub.args[2][1]).to.deep.equal({
       docs: Array(13).fill({ ...centerDoc, parent: { _id: '009' } }),
     });
-
+    expect(axiosPostStub.args[3][1]).to.deep.equal({
+      docs: Array(3).fill({ ...centerDoc, parent: { _id: '007' } }),
+    });
     expect(axiosPostStub.args[4][1]).to.deep.equal({
       docs: Array(7).fill({ ...unitDoc, parent: { _id: centerDoc._id, parent: { _id: '007' } } }),
     });
@@ -216,8 +205,7 @@ describe('Docs', () => {
       }]
     },];
 
-    await Promise
-      .all(Docs.createDocs(designs))
+    await Docs.createDocs(designs)
       .catch(() => assert('Should have not thrown error.'));
 
     expect(axiosPostStub.callCount).to.equal(2);
@@ -231,8 +219,7 @@ describe('Docs', () => {
     const hospitalDoc = { type: 'hospital', name: 'Green Hospital' };
     const designs = [{ designId: 'design-1', amount: 1, getDoc: () => hospitalDoc },];
 
-    await Promise
-      .all(Docs.createDocs(designs))
+    await Docs.createDocs(designs)
       .catch(() => assert.fail('Should have not thrown error.'));
 
     expect(axiosPostStub.callCount).to.equal(1);
@@ -264,8 +251,7 @@ describe('Docs', () => {
       ],
     }];
 
-    await Promise
-      .all(Docs.createDocs(designs))
+    await Docs.createDocs(designs)
       .catch(() => assert.fail('Should have not thrown error.'));
 
     expect(axiosPostStub.callCount).to.equal(4);
@@ -294,8 +280,7 @@ describe('Docs', () => {
       children: [{ amount: 1, getDoc: () => doc } ],
     }];
 
-    await Promise
-      .all(Docs.createDocs(designs))
+    await Docs.createDocs(designs)
       .catch(() => assert.fail('Should have not thrown error.'));
 
     expect(axiosPostStub.callCount).to.equal(2);
@@ -323,8 +308,7 @@ describe('Docs', () => {
         children: [{ amount: 1, getDoc: () => doc } ],
       }];
 
-      await Promise
-        .all(Docs.createDocs(designs))
+      await Docs.createDocs(designs)
         .catch(() => assert.fail('Should have not thrown error.'));
 
       expect(axiosPostStub.callCount).to.equal(2);
@@ -340,19 +324,15 @@ describe('Docs', () => {
     });
   });
 
-  it('should warn if amount or getDoc are missing', async () => {
+  it('should error if amount or getDoc are missing', async () => {
     let designs = [
       { designId: 'design-1' },
       { designId: 'design-2', amount: 2, getDoc: () => ({ _id: '124', type: 'hospital' }) },
     ];
 
-    await Promise
-      .all(Docs.createDocs(designs))
-      .catch(() => assert.fail('Should have not thrown error.'));
-
-    expect(axiosPostStub.calledOnce).to.be.true;
-    expect(consoleWarnStub.calledOnce).to.be.true;
-    expect(consoleWarnStub.args[0][0]).to.equal('Remember to set the "amount" and the "getDoc" in design-1.');
+    await Docs.createDocs(designs)
+      .then(() => assert.fail('Should have thrown error.'))
+      .catch(error => expect(error.message).to.equal('Remember to set the "amount" and the "getDoc" in design-1.'));
 
     resetHistory();
     designs = [
@@ -365,11 +345,9 @@ describe('Docs', () => {
       },
     ];
 
-    await Promise.all(Docs.createDocs(designs));
-
-    expect(axiosPostStub.calledOnce).to.be.true;
-    expect(consoleWarnStub.callCount).to.equal(4); // The first "amount" is 2 then it will run the "children" twice.
-    expect(consoleWarnStub.args[0][0]).to.equal('Remember to set the "amount" and the "getDoc" in design-1-1.');
+    await Docs.createDocs(designs)
+      .then(() => assert.fail('Should have thrown error.'))
+      .catch(error => expect(error.message).to.equal('Remember to set the "amount" and the "getDoc" in design-1-1.'));
 
     resetHistory();
     designs = [{
@@ -378,11 +356,9 @@ describe('Docs', () => {
       getDoc: () => ({ _id: '124', type: 'clinic' }),
     }];
 
-    await Promise.all(Docs.createDocs(designs));
-
-    expect(axiosPostStub.notCalled).to.be.true;
-    expect(consoleWarnStub.calledOnce).to.be.true;
-    expect(consoleWarnStub.args[0][0]).to.equal('Remember to set the "amount" and the "getDoc" in design-1.');
+    await Docs.createDocs(designs)
+      .then(() => assert.fail('Should have thrown error.'))
+      .catch(error => expect(error.message).to.equal('Remember to set the "amount" and the "getDoc" in design-1.'));
   });
 
   it('should catch errors when saving docs', async () => {
@@ -392,7 +368,7 @@ describe('Docs', () => {
     const error = new Error('Ups something happened');
     axiosPostStub.rejects(error);
 
-    await Promise.all(Docs.createDocs(designs));
+    await Docs.createDocs(designs);
 
     expect(axiosPostStub.calledOnce).to.be.true;
     expect(consoleErrorStub.calledOnce).to.be.true;
@@ -415,7 +391,7 @@ describe('Docs', () => {
     const error = new Error('Ups something happened');
     axiosPostStub.onFirstCall().rejects(error);
 
-    await Promise.all(Docs.createDocs(designs));
+    await Docs.createDocs(designs);
 
     expect(axiosPostStub.calledTwice).to.be.true;
     expect(axiosPostStub.args[0][0]).to.contain('/_bulk_docs');
