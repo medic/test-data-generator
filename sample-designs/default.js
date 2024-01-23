@@ -97,39 +97,46 @@ const getPregnancyDangerSign = () => {
 export default (context) => {
   return [
     {
+      designId: 'district-hospital',
       amount: 2,
       getDoc: () => getDistrictHospital(context),
       children: [
         {
+          designId: 'health-center',
           amount: 2,
           getDoc: () => getHealthCenter(context),
           children: [
             {
+              designId: 'household',
               amount: 2,
               getDoc: () => getHousehold(context),
               children: [
                 {
+                  designId: 'woman-person',
                   amount: 1,
                   getDoc: () => getWoman(context),
                   children: [
                     {
+                      designId: 'pregnancy-danger-report',
                       amount: 1,
                       getDoc: () => getPregnancyDangerSign(),
                     }
                   ]
                 },
-                { amount: 2, getDoc: () => getChild(context) },
-                { amount: 1, getDoc: () => getInfant(context) },
-                { amount: 2, getDoc: () => getPatient(context) }
+                { designId: 'child-person', amount: 2, getDoc: () => getChild(context) },
+                { designId: 'infant-person', amount: 1, getDoc: () => getInfant(context) },
+                { designId: 'patient-person', amount: 2, getDoc: () => getPatient(context) }
               ]
             },
             {
+              designId: 'chw',
               amount: 1,
               getDoc: () => getCHW(context),
             }
           ]
         },
         {
+          designId: 'chw-supervisor',
           amount: 1,
           getDoc: () => getCHWSupervisor(context),
         }
