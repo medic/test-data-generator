@@ -14,38 +14,40 @@ export class Docs {
     }
   }
 
-  static createDocs(designs, parentDoc?: Doc) {
-    return designs.map((design, index) => {
+  static async createDocs(designs, parentDoc?: Doc) {
+    for(const [index, design] of designs.entries()) {
       if (!design.designId) {
         design.designId = index;
       }
+      await this.createDocsForDesign(design, parentDoc);
+    }
+  }
 
-      if (!design.amount || !design.getDoc) {
-        console.warn(`Remember to set the "amount" and the "getDoc" in ${design.designId}.`);
-        return;
-      }
+  private static async createDocsForDesign(design, parentDoc?: Doc) {
+    if (!design.amount || !design.getDoc) {
+      throw Error(`Remember to set the "amount" and the "getDoc" in ${design.designId}.`);
+    }
 
-      const batch = new Array(design.amount)
-        .fill(null)
-        .map(() => {
-          const doc = design.getDoc({ parent: parentDoc });
-          return {
-            design,
-            doc: {
-              _id: uuid(),
-              ...doc,
-              ...Docs.getParentAssociationData(doc, parentDoc)
-            },
-          };
-        });
+    const batch = new Array(design.amount)
+      .fill(null)
+      .map(() => {
+        const doc = design.getDoc({ parent: parentDoc });
+        return {
+          design,
+          doc: {
+            _id: uuid(),
+            ...doc,
+            ...Docs.getParentAssociationData(doc, parentDoc)
+          },
+        };
+      });
 
-      const parentDocsPromise = Docs.saveDocs(batch.map(entity => entity.doc), design.db, design.designId);
-      return parentDocsPromise.then(() => Promise.all(
-        batch
-          .filter(entity => entity.doc.type !== DocType.dataRecord && entity.design.children)
-          .map(entity => Docs.createDocs(entity.design.children, entity.doc))
-      ));
-    });
+    await Docs.saveDocs(batch.map(entity => entity.doc), design.db, design.designId);
+    const entityWithChildrenToCreate = batch
+      .filter(entity => entity.doc.type !== DocType.dataRecord && entity.design.children);
+    for(const entity of entityWithChildrenToCreate) {
+      await Docs.createDocs(entity.design.children, entity.doc);
+    }
   }
 
   private static createParentRelation(parentDoc: Doc | Parent): Parent {
