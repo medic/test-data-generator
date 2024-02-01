@@ -1,14 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { v4 as uuid } from 'uuid';
 
-/*
-  Adjust these constants to generate more or less data.
- */
-const NUM_USERS = 1000;
-const NUM_DEVICES_PER_USER = 2;
-const NUM_TELEMETRY_PER_USER = 1000;
-
-
 const getTelemetryMetric = () => ({
   sum: faker.number.float(50000),
   min: faker.number.float(1000),
@@ -31,7 +23,7 @@ const getUserAgent = () => {
 };
 
 const getTelemetryDoc = (user, deviceId) => {
-  const telDateRaw = faker.date.recent({ days: 365 * 10 });
+  const telDateRaw = faker.date.recent({ days: 365 * 20 });
   const year = telDateRaw.getFullYear();
   const month = telDateRaw.getMonth();
   const day = telDateRaw.getDay();
@@ -172,22 +164,102 @@ const getTelemetryDoc = (user, deviceId) => {
   };
 };
 
-const getDesignForUserDevice = (user) => {
-  const deviceId = uuid();
+const getUserDoc = (parent, { username, roles, password }) => ({
+  _id: `org.couchdb.user:${username}`,
+  name: username,
+  type: 'user',
+  roles,
+  facility_id: parent.parent._id,
+  password,
+});
+
+const getUserSettingsDoc = (parent, { username, roles }) => ({
+  _id: `org.couchdb.user:${username}`,
+  name: username,
+  type: 'user-settings',
+  roles,
+  facility_id: parent.parent._id,
+  contact_id: parent._id,
+  fullname: parent.name
+});
+
+const getUsername = (parent, username) => {
+  const result = username || parent.username;
+  if(!result) {
+    throw new Error('A username value must be provided in the options or set on the parent contact.');
+  }
+  return result;
+};
+
+/**
+ * Returns a design for creating telemetry data for a user.
+ * @param providedOpts telemetry options:
+ *   - `username` - Required.
+ *   - `deviceId` - Default: `username-${uuid()}`
+ *   - `amount` - Default: `1`
+ * @returns a design for creating user telemetry data
+ */
+export const getTelemetryDesign = (providedOpts) => {
+  const opts = { amount: 1, ...providedOpts };
+  const defaultUUID = uuid();
   return {
-    designId: `${user}-${deviceId}`,
+    designId: `Telemetry`,
     db: 'medic-users-meta',
-    amount: NUM_TELEMETRY_PER_USER / NUM_DEVICES_PER_USER,
-    getDoc: () => getTelemetryDoc(user, deviceId)
+    amount: opts.amount,
+    getDoc: ({ parent }) => {
+      const username = getUsername(parent, opts.username);
+      const deviceId = `${username}-${defaultUUID}`;
+      // If deviceId is not provided, we want to use different device ids for each user,
+      // but the same device id for all the telemetry data of a particular user.
+      return getTelemetryDoc(username, opts.deviceId || deviceId);
+    }
   };
 };
 
-const getDesignsForUser = () => {
-  const user = `${faker.person.firstName()
-    .toLowerCase()}${faker.number.int(1000000)}`;
-  console.log(`Generating telemetry for user ${user}`);
-  return Array.from({ length: NUM_DEVICES_PER_USER }, () => getDesignForUserDevice(user));
+/**
+ * Returns designs for creating a new user.
+ * @param providedOpts user options:
+ *   - `username` - Required if `username` is not set on the parent contact. Setting a `username` on the parent contact
+ *      is useful for avoiding username collisions when generating multiple users with the same design (e.g. the
+ *      `amount` of the parent contact > 1).
+ *   - `roles` - Default: `['chw']`
+ *   - `password` - Default: `'password'`
+ *   - `telemetryCount` - Default: `10`
+ * @returns an array of designs for creating a user
+ */
+export const getUserDesigns = (providedOpts) => {
+  const opts = { roles: ['chw'], password: 'password', telemetryCount: 10, ...providedOpts };
+  return [
+    {
+      amount: 1,
+      designId: `_users ${opts.username}`,
+      db: '_users',
+      getDoc: ({ parent }) => getUserDoc(parent, { username: parent.username, ...opts }),
+    },
+    {
+      amount: 1,
+      designId: `user-settings ${opts.username}`,
+      db: 'medic',
+      getDoc: ({ parent }) => getUserSettingsDoc(parent, { username: parent.username, ...opts }),
+    },
+    getTelemetryDesign({ ...opts, amount: opts.telemetryCount })
+  ];
 };
 
-export default () => Array.from({ length: NUM_USERS })
-  .flatMap(getDesignsForUser);
+/**
+ * Returns designs for creating a new user for an existing contact. (Must manually adjust the contact details.)
+ * @param context the design context
+ * @returns an array of designs for creating a user for an existing contact
+ */
+export default context => getUserDesigns({ username: 'chw9' })
+  .map(design => ({
+    ...design,
+    getDoc: (opts) => design.getDoc({
+      ...opts,
+      parent: {
+        _id: '017f0660-72ff-4c2c-9927-4a813293a8c3',
+        name: 'Lyle Zboncak',
+        parent: { _id: 'f8f1ce44-7330-447e-a2be-176268e5094d' }
+      }
+    }),
+  }));
