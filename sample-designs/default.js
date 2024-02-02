@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { getUserDesigns } from './users.js';
 
 const YES_NO = [ 'yes', 'no' ];
 
@@ -54,8 +55,14 @@ const getPerson = (context, role, { sex = faker.person.sex(), ageRange = { min: 
   };
 };
 
-const getCHWSupervisor = context => getPerson(context, 'chw_supervisor');
-const getCHW = context => getPerson(context, 'chw');
+const getCHWSupervisor = context => ({
+  ...getPerson(context, 'chw_supervisor'),
+  username: `super${faker.number.int(10000)}`
+});
+const getCHW = context => ({
+  ...getPerson(context, 'chw'),
+  username: `chw${faker.number.int(10000)}`
+});
 const getPatient = context => getPerson(context, 'patient');
 const getWoman = context => getPerson(context, 'patient', { sex: 'female', ageRange: { min: 15, max: 45 } });
 const getChild = context => getPerson(context, 'patient', { ageRange: { min: 0, max: 14 } });
@@ -132,6 +139,7 @@ export default (context) => {
               designId: 'chw',
               amount: 1,
               getDoc: () => getCHW(context),
+              children: getUserDesigns()
             }
           ]
         },
@@ -139,6 +147,7 @@ export default (context) => {
           designId: 'chw-supervisor',
           amount: 1,
           getDoc: () => getCHWSupervisor(context),
+          children: getUserDesigns({ roles: ['chw_supervisor'] })
         }
       ]
     },
