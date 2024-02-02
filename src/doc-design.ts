@@ -20,6 +20,11 @@ export type DocDesign = (context: DesignContext) => DesignSpec[];
  */
 export interface DesignSpec {
   /**
+   * Optional. Useful for debugging and to identify if the upload was successful or failed. Defaults to index in array.
+   */
+  designId?: string;
+
+  /**
    * Required. The number of documents of this type to generate. This also servers as the batch size of docs to upload.
    */
   amount: number;
@@ -32,9 +37,10 @@ export interface DesignSpec {
   /**
    * Required. Returns the document to generate. If no `_id` value is provided, one will be generated automatically.
    * This function is called the number of times defined in the `amount` property.
+   * @param args.parent the newly created parent document if one exists, otherwise undefined
    * @returns the document to generate
    */
-  getDoc(): Doc;
+  getDoc(args: { parent?: Doc }): Doc;
 
   /**
    * Defines the children documents that should be created for the current document type. These children will be
@@ -48,7 +54,7 @@ export interface DesignSpec {
 
 export interface Parent {
   _id: string,
-  parent?: Record<string, string>
+  parent?: Parent
 }
 
 export interface Doc {

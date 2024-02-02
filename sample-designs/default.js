@@ -61,7 +61,7 @@ const getWoman = context => getPerson(context, 'patient', { sex: 'female', ageRa
 const getChild = context => getPerson(context, 'patient', { ageRange: { min: 0, max: 14 } });
 const getInfant = context => getPerson(context, 'patient', { ageRange: { min: 0, max: 1 } });
 
-const getPregnancyDangerSign = () => {
+const getPregnancyDangerSign = (patient) => {
   return {
     form: 'pregnancy_danger_sign',
     type: 'data_record',
@@ -69,7 +69,7 @@ const getPregnancyDangerSign = () => {
     reported_date: faker.date.recent({ days: 5 }).getTime(),
     fields: {
       patient_age_in_years: 34,
-      patient_name: 'Erick Loral',
+      patient_name: patient.name,
       t_danger_signs_referral_follow_up_date: faker.date.recent({ days: 5 }).toISOString(),
       t_danger_signs_referral_follow_up: 'yes', // Intentionally 'yes'
       danger_signs: {
@@ -97,39 +97,46 @@ const getPregnancyDangerSign = () => {
 export default (context) => {
   return [
     {
+      designId: 'district-hospital',
       amount: 2,
       getDoc: () => getDistrictHospital(context),
       children: [
         {
+          designId: 'health-center',
           amount: 2,
           getDoc: () => getHealthCenter(context),
           children: [
             {
+              designId: 'household',
               amount: 2,
               getDoc: () => getHousehold(context),
               children: [
                 {
+                  designId: 'woman-person',
                   amount: 1,
                   getDoc: () => getWoman(context),
                   children: [
                     {
+                      designId: 'pregnancy-danger-report',
                       amount: 1,
-                      getDoc: () => getPregnancyDangerSign(),
+                      getDoc: ({parent}) => getPregnancyDangerSign(parent),
                     }
                   ]
                 },
-                { amount: 2, getDoc: () => getChild(context) },
-                { amount: 1, getDoc: () => getInfant(context) },
-                { amount: 2, getDoc: () => getPatient(context) }
+                { designId: 'child-person', amount: 2, getDoc: () => getChild(context) },
+                { designId: 'infant-person', amount: 1, getDoc: () => getInfant(context) },
+                { designId: 'patient-person', amount: 2, getDoc: () => getPatient(context) }
               ]
             },
             {
+              designId: 'chw',
               amount: 1,
               getDoc: () => getCHW(context),
             }
           ]
         },
         {
+          designId: 'chw-supervisor',
           amount: 1,
           getDoc: () => getCHWSupervisor(context),
         }

@@ -4,57 +4,67 @@ import { DocType, Parent, Doc } from './doc-design.js';
 import { environment } from './environment.js';
 
 export class Docs {
-  private static async saveDocs(docs, dbName = 'medic') {
+  private static async saveDocs(docs, dbName = 'medic', batchId) {
     const path = `${environment.getChtUrl()}/${dbName}/_bulk_docs`;
     try {
       await axios.post(path, { docs });
-      console.info(`Successfully saved ${docs.length} docs.`);
+      console.info(`Successfully saved ${docs.length} docs from ${batchId}.`);
     } catch (error) {
-      console.error('Failed saving docs ::>', error);
+      console.error(`Failed saving docs from ${batchId}. Errors: `, error.message || error.errors || error);
     }
   }
 
-  static createDocs(designs, parentDoc?: Doc) {
-    return designs.map(design => {
-      if (!design.amount || !design.getDoc) {
-        console.warn('Remember to set the "amount" and the "getDoc".');
-        return;
+  static async createDocs(designs, parentDoc?: Doc) {
+    for(const [index, design] of designs.entries()) {
+      if (!design.designId) {
+        design.designId = index;
       }
-
-      const batch = new Array(design.amount)
-        .fill(null)
-        .map(() => {
-          const doc = design.getDoc();
-          return {
-            design,
-            doc: {
-              _id: uuid(),
-              ...doc,
-              ...Docs.getParentAssociationData(doc, parentDoc)
-            },
-          };
-        });
-
-      const parentDocsPromise = Docs.saveDocs(batch.map(entity => entity.doc), design.db);
-      return parentDocsPromise.then(() => Promise.all(
-        batch
-          .filter(entity => entity.doc.type !== DocType.dataRecord && entity.design.children)
-          .map(entity => Docs.createDocs(entity.design.children, entity.doc))
-      ));
-    });
+      await this.createDocsForDesign(design, parentDoc);
+    }
   }
 
-  private static createParentRelation(parentDoc: Doc): Parent {
+  private static async createDocsForDesign(design, parentDoc?: Doc) {
+    if (!design.amount || !design.getDoc) {
+      throw Error(`Remember to set the "amount" and the "getDoc" in ${design.designId}.`);
+    }
+
+    const batch = new Array(design.amount)
+      .fill(null)
+      .map(() => {
+        const doc = design.getDoc({ parent: parentDoc });
+        return {
+          design,
+          doc: {
+            _id: uuid(),
+            ...doc,
+            ...Docs.getParentAssociationData(doc, parentDoc)
+          },
+        };
+      });
+
+    await Docs.saveDocs(batch.map(entity => entity.doc), design.db, design.designId);
+    const entityWithChildrenToCreate = batch
+      .filter(entity => entity.doc.type !== DocType.dataRecord && entity.design.children);
+    for(const entity of entityWithChildrenToCreate) {
+      await Docs.createDocs(entity.design.children, entity.doc);
+    }
+  }
+
+  private static createParentRelation(parentDoc: Doc | Parent): Parent {
     if (!parentDoc) {
       return;
     }
 
-    const parent: Parent = { _id: parentDoc._id };
-    if (parentDoc.parent) {
-      parent.parent = { _id: parentDoc.parent._id };
+    const result: Parent = { _id: parentDoc._id };
+    let minified: Parent = result;
+
+    while (parentDoc.parent) {
+      minified.parent = { _id: parentDoc.parent._id };
+      minified = minified.parent;
+      parentDoc = parentDoc.parent;
     }
 
-    return parent;
+    return result;
   }
 
   private static getPatientPlaceIdentifiers(parentDoc: Doc) {
