@@ -560,12 +560,12 @@ const addReportsToPatient = (context, patients, reportedDaysAgo) => {
 export default (context) => {
   return [
     {
-      id: 'a_county',
+      designId: 'a_county',
       amount: 1,
       getDoc: () => getACounty(context),
       children: [
         {
-          id: 'b_sub_county',
+          designId: 'b_sub_county',
           amount: 1,
           getDoc: ({ parent }) => {
             console.log('b_sub_county - parent: ', parent._id, parent);
@@ -573,42 +573,42 @@ export default (context) => {
           },
           children: [
             {
-              id: 'c_community_health_unit',
+              designId: 'c_community_health_unit',
               amount: 1,
               getDoc: () => getCHU(context),
               children: [
                 {
-                  id: 'd_community_health_volunteer_area',
+                  designId: 'd_community_health_volunteer_area',
                   amount: 3,
                   getDoc: () => getCHVArea(context),
                   children: [
                     {
-                      id: 'chw',
+                      designId: 'chw',
                       amount: 1,
                       getDoc: () => getCHP(context),
                     },
                     {
-                      id: 'e_household',
+                      designId: 'e_household',
                       amount: 110,
                       getDoc: () => getHouseHold(context),
                       children: [
                         {
-                          id: 'CHVSignalReporting',
+                          designId: 'CHVSignalReporting',
                           amount: 1,
                           getDoc: ({ parent }) => getCHVSignalReporting(context, parent),
                         },
                         {
-                          id: 'f_client',
+                          designId: 'f_client',
                           amount: 8,
                           getDoc: () => getHouseholdClient(context),
                           children: [
                             {
-                              id: 'sgbv',
+                              designId: 'sgbv',
                               amount: 1,
                               getDoc: ({ parent }) => getSexualGenderViolenceReport(context, parent),
                             },
                             {
-                              id: 'over-five-assessment',
+                              designId: 'over-five-assessment',
                               amount: 1,
                               getDoc: ({ parent }) => getOverFiveAssessment(context, parent),
                             }

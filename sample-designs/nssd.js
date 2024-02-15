@@ -88,38 +88,47 @@ const getPerson = (context, { sex = faker.person.sex(), ageRange = { min: 20, ma
 export default (context) => {
   return [
     {
+      designId: 'place-center',
       amount: 1,
       getDoc: () => getCenter(context),
       children: [
         {
+          designId: 'place-province',
           amount: 1,
           getDoc: () => getProvince(context),
           children: [
             {
+              designId: 'place-district',
               amount: 1,
               getDoc: () => getDistrict(context),
               children: [
                 {
+                  designId: 'place-municipality',
                   amount: 1,
                   getDoc: () => getMunicipality(context),
                   children: [
                     {
+                      designId: 'place-ward',
                       amount: 1,
                       getDoc: () => getWard(context),
                       children: [
                         {
+                          designId: 'place-chn-area',
                           amount: 1,
                           getDoc: () => getCHNArea(context),
                           children: [
                             {
+                              designId: 'place-fchv-area',
                               amount: 1,
                               getDoc: () => getFCHVArea(context),
                               children: [
                                 {
+                                  designId: 'place-household',
                                   amount: 1,
                                   getDoc: () => getHousehold(context),
                                   children: [
                                     {
+                                      designId: 'place-person',
                                       amount: 2,
                                       getDoc: () => getPerson(context),
                                     }
