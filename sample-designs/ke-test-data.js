@@ -361,22 +361,175 @@ const addFamilyToHouseholds = (context, householdParent, amountFamilyMembers, ho
   });
 };
 
-const getSexualGenderViolenceReport = (context, patientID, reportedDaysAgo=5) => {
+const getSexualGenderViolenceReport = (context, patient, reportedDaysAgo=9) => {
+  //console.log('sgbv - patient:', patient);
   return {
     form: 'sgbv',
     type: 'data_record',
     content_type: 'xml',
     reported_date: faker.date.recent({ days: reportedDaysAgo }).getTime(),
-    contact: { _id: patientID },
+    // contact: { _id: chw._id },
     from: faker.helpers.fromRegExp(/[+]2547[0-9]{8}/),
     fields: {
-      patient_uuid: patientID,
-      patient_id: patientID,
+      patient_uuid: patient._id,
+      patient_id: patient._id,
+      patient_name: patient.name,
       sgbv: {
         sgbv_observe_note: faker.lorem.words(),
         has_observed_sgbv_signs: faker.helpers.arrayElement(YES_NO),
         sgbv_signs_observed: faker.lorem.words(),
         is_referred_to_cha: 'yes'
+      },
+    },
+  };
+};
+
+const getCHVSignalReporting = (context, household, reportedDaysAgo=9) => {
+  return {
+    form: 'chv_signal_reporting',
+    type: 'data_record',
+    content_type: 'xml',
+    reported_date: faker.date.recent({ days: reportedDaysAgo }).getTime(),
+    from: faker.helpers.fromRegExp(/[+]2547[0-9]{8}/),
+    fields: {
+      place_uuid: household._id,
+      chw_area_id: household._id,
+      signal_code: '3',
+      signal_type_label:
+        '3. Any child less than 15 years with a sudden onset of weakness of the legs and arms not due to injury',
+      chv_signal: {
+        signal_type: 'child_weak_legs_arms',
+        signal_description: faker.lorem.lines(1),
+      },
+    },
+    case_id: faker.string.alphanumeric(5),
+  };
+};
+
+const getOverFiveAssessment = (context, patient, reportedDaysAgo=9) => {
+  return {
+    form: 'over_five_assessment',
+    type: 'data_record',
+    content_type: 'xml',
+    reported_date: faker.date.recent({ days: reportedDaysAgo }).getTime(),
+    from: faker.helpers.fromRegExp(/[+]2547[0-9]{8}/),
+    fields: {
+      place_uuid: patient.parent._id,
+      chw_area_id: patient.parent._id,
+      patient_uuid: patient._id,
+      patient_id: patient._id,
+      patient_name: patient.parent.name,
+      is_malaria_endemic: true,
+      is_pregnant: false,
+      is_in_pnc: false,
+      needs_follow_up: 'yes',
+      has_been_referred: 'yes',
+      has_malaria: false,
+      needs_general_danger_signs_referral: false,
+      needs_general_signs_symptoms_referral: false,
+      needs_fever_referral: false,
+      needs_malaria_referral: false,
+      needs_tb_referral: false,
+      needs_diarrhoea_referral: false,
+      needs_diabetes_referral: true,
+      needs_hypertension_referral: true,
+      needs_mental_health_referral: true,
+      needs_sgbv_referral: false,
+      diabetes_referral_follow_up_date: '2024-02-12',
+      hypertension_referral_follow_up_date: '2024-02-12',
+      mental_health_referral_follow_up_date: '2024-02-12',
+      is_hypertensive_display: 'No',
+      is_diabetic_display: 'No',
+      visited_contact_uuid: patient._id,
+      is_curr_diabetic: true,
+      is_curr_hypertensive: true,
+      referred_to_facility_code: 'X facility code',
+      referred_to_facility_name: 'X facility',
+      assessment: {
+        is_sick: 'no'
+      },
+      group_hiv: {
+        knows_hiv_status: 'no',
+      },
+      group_diabetes: {
+        is_diabetic: 'no',
+        diabetes_symptoms: 'thirst_or_hunger',
+      },
+      group_hypertension: {
+        is_hypertensive: 'no',
+        hypertension_symptoms: 'severe_headache',
+        bp_label: 'INDETERMINATE',
+        bp_label_color: 'orange',
+        bp_values_valid: false,
+      },
+      group_cancer: {
+        is_screened_cancer: 'no',
+      },
+      group_mental_health: {
+        mental_signs: 'tearfulness',
+        observed_mental_signs: 'irritability_agitated',
+      },
+      group_sexual_gender_based_violence: {
+        has_observed_signs_of_violence: 'no'
+      },
+      insurance: {
+        upto_date_insurance: 'no',
+      },
+      group_summary: {
+        header_label: 'RESULTS',
+      },
+      additional_doc: {
+        place_id: patient.parent._id,
+        chv_area_id: patient.parent._id,
+        type: 'data_record',
+        content_type: 'xml',
+        form: 'chv_consumption_log',
+        fields: {
+          rdts_quantity_issued: 0,
+          act_6_quantity_issued: 0,
+          act_12_quantity_issued: 0,
+          act_18_quantity_issued: 0,
+          act_24_quantity_issued: 0,
+          dt_250_quantity_issued: 0,
+          ors_zinc_quantity_issued: 0,
+          ors_sachets_quantity_issued: 0,
+          zinc_sulphate_quantity_issued: 0,
+          albendazole_quantity_issued: 0,
+          tetra_eye_quantity_issued: 0,
+          paracetamol_120_quantity_issued: 0,
+          mebendazole_quantity_issued: 0,
+          coc_quantity_issued: 0,
+          prog_quantity_issued: 0,
+          depo_im_quantity_issued: 0,
+          depo_sc_quantity_issued: 0,
+          preg_strip_quantity_issued: 0,
+          chlorine_quantity_issued: 0,
+          gluc_strips_quantity_issued: 0,
+          paracetamol_500_quantity_issued: 0,
+          bandages_quantity_issued: 0,
+          povi_quantity_issued: 0,
+          strap_quantity_issued: 0,
+          gloves_quantity_issued: 0,
+          envelopes_quantity_issued: 0
+        },
+      },
+      data: {
+        _upi: '',
+        _patient_name: patient.name,
+        _referred_to_facility_code: 'X facility code',
+        _referred_to_facility_name: 'X facility',
+        _follow_up_date: '2024-02-12',
+        _screening: {
+          _diabetes_symptoms: 'thirst_or_hunger',
+          _hypertension_symptoms: 'severe_headache',
+          _mental_signs: 'tearfulness',
+          _observed_mental_signs: 'irritability_agitated'
+        },
+        _supporting_info: {
+          _knows_hiv_status: 'no',
+          _is_screened_cancer: 'no',
+          _has_observed_signs_of_violence: 'no'
+        },
       },
     },
   };
@@ -405,28 +558,71 @@ const addReportsToPatient = (context, patients, reportedDaysAgo) => {
 };
 
 export default (context) => {
-  const householdParent = {
-    _id: 'ba0016ce-18a9-4d57-949a-9c14c2040fe8',
-    parent: {
-      _id: 'cce35f62-1914-4598-bdd1-736b5bd0a45a',
-      parent: {
-        _id: '48f92c12-f0a1-4d95-8f9f-6d65588995e7',
-        parent: {
-          _id: '74d53432-9206-4a2a-aeb7-6e4b96349af0'
-        }
-      }
-    }
-  };
-
   return [
-    ...addFamilyToHouseholds(context, householdParent, 5, [
-      '5933ff98-0dbb-4987-965f-51409d253cf3',
-    ]),
-    ...addFamilyToHouseholds(context, householdParent, 8, [
-      '5933ff98-0dbb-4987-965f-51409d253cf3',
-    ]),
-    ...addReportsToPatient(context, [
-      '13e9f85d-1fc3-4efc-8f89-aae1abd3f82d'
-    ]),
+    {
+      id: 'a_county',
+      amount: 1,
+      getDoc: () => getACounty(context),
+      children: [
+        {
+          id: 'b_sub_county',
+          amount: 1,
+          getDoc: ({ parent }) => {
+            console.log('b_sub_county - parent: ', parent._id, parent);
+            return getSubCounty(context);
+          },
+          children: [
+            {
+              id: 'c_community_health_unit',
+              amount: 1,
+              getDoc: () => getCHU(context),
+              children: [
+                {
+                  id: 'd_community_health_volunteer_area',
+                  amount: 3,
+                  getDoc: () => getCHVArea(context),
+                  children: [
+                    {
+                      id: 'chw',
+                      amount: 1,
+                      getDoc: () => getCHP(context),
+                    },
+                    {
+                      id: 'e_household',
+                      amount: 110,
+                      getDoc: () => getHouseHold(context),
+                      children: [
+                        {
+                          id: 'CHVSignalReporting',
+                          amount: 1,
+                          getDoc: ({ parent }) => getCHVSignalReporting(context, parent),
+                        },
+                        {
+                          id: 'f_client',
+                          amount: 8,
+                          getDoc: () => getHouseholdClient(context),
+                          children: [
+                            {
+                              id: 'sgbv',
+                              amount: 1,
+                              getDoc: ({ parent }) => getSexualGenderViolenceReport(context, parent),
+                            },
+                            {
+                              id: 'over-five-assessment',
+                              amount: 1,
+                              getDoc: ({ parent }) => getOverFiveAssessment(context, parent),
+                            }
+                          ],
+                        }
+                      ],
+                    }
+                  ],
+                }
+              ],
+            }
+          ],
+        }
+      ],
+    }
   ];
 };
