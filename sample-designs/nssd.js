@@ -305,7 +305,10 @@ export default (context) => {
         {
           designId: 'director',
           amount: 1,
-          getDoc: ({ parent }) => getDirectorOfCenter(context, { parent }),
+          getDoc: ({ parent }) => {
+            console.log(parent);
+            return getDirectorOfCenter(context, { parent });
+          },
         },
         {
           designId: 'place-province',
@@ -387,21 +390,21 @@ export default (context) => {
                                           designId: 'mental-health-screening-report',
                                           amount: 2,
                                           getDoc: ({ parent }) => getMentalHealthScreeningReport(
-                                            context, { parent }
+                                            context, { patient: parent }
                                           ),
                                         },
                                         {
                                           designId: 'Breast-Cancer-Report',
                                           amount: 1,
                                           getDoc: ({ parent }) => getBreastCancerReport(
-                                            context, { parent }
+                                            context, { patient: parent }
                                           ),
                                         },
                                         {
                                           designId: 'Not-Communicable-Diseases-Report',
                                           amount: 1,
                                           getDoc: ({ parent }) => getNotCommunicableDiseasesReport(
-                                            context, { parent }
+                                            context, { patient: parent }
                                           ),
                                         },
                                       ]
