@@ -373,7 +373,7 @@ export default (context) => {
                                 },
                                 {
                                   designId: 'place-household',
-                                  amount: 1,
+                                  amount: 110,
                                   getDoc: () => getHousehold(context),
                                   children: [
                                     {
@@ -383,7 +383,7 @@ export default (context) => {
                                     },
                                     {
                                       designId: 'place-person',
-                                      amount: 1,
+                                      amount: 8,
                                       getDoc: ({ parent }) => getPerson(context, { parent }),
                                       children: [
                                         {
