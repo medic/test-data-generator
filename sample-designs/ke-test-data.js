@@ -3,6 +3,10 @@ import { faker } from '@faker-js/faker';
 const YES_NO = [ 'yes', 'no' ];
 const RELATIONSHIP = [ 'friend', 'sister', 'brother', 'mother', 'father' ];
 
+/*
+ *  PLACES
+ */
+
 const getPlace = (context, type, contactType, nameSuffix) => {
   return {
     type: type,
@@ -53,6 +57,10 @@ const getHouseHold = context => {
     needs_registration_follow_up: faker.helpers.arrayElement(YES_NO),
   };
 };
+
+/*
+ *  PEOPLE
+ */
 
 const getHouseholdClient = (context, { sex = faker.person.sex(), ageRange = { min: 20, max: 60 } } = {}) => {
   const dobRaw = faker.date.birthdate({ mode: 'age', ...ageRange});
@@ -360,6 +368,10 @@ const addFamilyToHouseholds = (context, householdParent, amountFamilyMembers, ho
     };
   });
 };
+
+/*
+ *  REPORTS
+ */
 
 const getSexualGenderViolenceReport = (context, patient, reportedDaysAgo=9) => {
   //console.log('sgbv - patient:', patient);
