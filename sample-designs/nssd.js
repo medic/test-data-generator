@@ -2,6 +2,10 @@ import { faker } from '@faker-js/faker';
 
 const YES_NO = [ 'yes', 'no' ];
 
+/*
+ *  PLACES
+ */
+
 const getPlace = (context, contactType, nameSuffix) => {
   return {
     type: 'contact',
@@ -54,6 +58,10 @@ const getHousehold = context => {
       .getTime(),
   };
 };
+
+/*
+ *  PEOPLE
+ */
 
 const getPerson = (context, { parent, sex = faker.person.sex(), ageRange = { min: 20, max: 60 } } = {}) => {
   const dobRaw = faker.date.birthdate({ mode: 'age', ...ageRange});
@@ -180,6 +188,10 @@ const geHouseholdSurveyReport = (context, { parent, reportedDaysAgo = 9 }) => {
   };
 };
 
+/*
+ *  REPORTS
+ */
+
 const getMentalHealthScreeningReport = (context, { patient, reportedDaysAgo = 9 }) => {
   const healthIssues1 = {
     changes_in_behavior: 'powerful_person talk_unnecessary audio_hallucination walk_around_dirty ' +
@@ -227,6 +239,7 @@ const getMentalHealthScreeningReport = (context, { patient, reportedDaysAgo = 9 
     content_type: 'xml',
     reported_date: faker.date.recent({ days: reportedDaysAgo }).getTime(),
     from: faker.helpers.fromRegExp(/[+]2547[0-9]{8}/),
+    contact: patient,
     fields: {
       patient_uuid: patient._id,
       patient_name: patient.name,
@@ -235,6 +248,7 @@ const getMentalHealthScreeningReport = (context, { patient, reportedDaysAgo = 9 
     }
   };
 };
+
 const getNotCommunicableDiseasesReport = (context, { patient, reportedDaysAgo = 9 }) => {
   const takingMeds = faker.helpers.arrayElement(['yes_all', 'yes_some', 'no']);
   return {
@@ -243,6 +257,7 @@ const getNotCommunicableDiseasesReport = (context, { patient, reportedDaysAgo = 
     content_type: 'xml',
     reported_date: faker.date.recent({ days: reportedDaysAgo }).getTime(),
     from: faker.helpers.fromRegExp(/[+]2547[0-9]{8}/),
+    contact: patient,
     fields: {
       patient_uuid: patient._id,
       patient_name: patient.name,
@@ -273,6 +288,7 @@ const getBreastCancerReport = (context, { patient, reportedDaysAgo = 9 }) => {
     content_type: 'xml',
     reported_date: faker.date.recent({ days: reportedDaysAgo }).getTime(),
     from: faker.helpers.fromRegExp(/[+]2547[0-9]{8}/),
+    contact: patient,
     fields: {
       patient_uuid: patient._id,
       patient_name: patient.name,
