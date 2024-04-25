@@ -5,8 +5,8 @@
   "type": "module",
   "main": "built/index.js",
   "engines": {
-    "npm": ">=8.0.0",
-    "node": ">=16.0.0"
+    "node": ">=20.11.0",
+    "npm": ">=10.2.4"
   },
   "scripts": {
     "test": "mocha",
