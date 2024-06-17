@@ -9,13 +9,14 @@
     "npm": ">=10.2.4"
   },
   "scripts": {
+    "postinstall": "npm run build",
     "test": "mocha",
     "lint": "eslint .",
     "build": "npm run lint && tsc",
     "generate": "npm run build && echo 'Processing, please wait.' && node built/."
   },
   "bin": {
-    "test-data-generator": "src/built/index.js"
+    "test-data-generator": "built/index.js"
   },
   "keywords": [
     "CHT",
