@@ -26,11 +26,12 @@ Design the test data that fit your project hierarchy and reports. The tool will 
 
 Instructions on setting up the project and getting it running on a local machine.
 
-- Set the `COUCH_URL` environment variable to point your test instance, for example it something similar to this: `http://[user]:[pass]@[host]:[port]/medic`
+- Set the `COUCH_URL` environment variable to point your test instance, for example it is something similar to this: `http://[user]:[pass]@[host]:[port]/medic`
 - Double-check your CHT test instance is running
-- Install the project by running `npm ci`
+- Clone or fork the repository
+- Install the project globally by running `npm install -g`.
 - Design the test data in a custom JavaScript file. See section [Designing Test Data](#designing-test-data).
-- Build, generate data and upload by running `npm run generate *path_to_your_custom_design_file*`
+- Build, generate data and upload by running `test-data-generator *path_to_your_custom_design_file*`
 
 ## Designing Test Data
 
@@ -38,7 +39,7 @@ Steps to design the test data:
 
 1. Create a custom JavaScript file that exports a `default` function. This function should match the [`DocDesign` type](./src/doc-design.ts).
 2. Your custom function should return an array of [`DesignSpec`](./src/doc-design.ts) objects that define the structure of your data to create.
-3. Generate and upload data `npm run generate *path_to_your_custom_design_file*`. That's all! You can check the data in the CHT's CouchDB.
+3. Generate and upload data `test-data-generator *path_to_your_custom_design_file*`. That's all! You can check the data in the CHT's CouchDB.
 
 Note that `getDoc` function should return an object with at least a `type: string`. Remember that `type` is a `data_record` for reports, but when it comes to contacts, use the `contact_types` defined in your CHT project's `app-settings.json`. 
 
