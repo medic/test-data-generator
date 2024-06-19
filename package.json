@@ -9,10 +9,11 @@
     "npm": ">=10.2.4"
   },
   "scripts": {
+    "postinstall": "npm run build",
     "test": "mocha",
     "lint": "eslint .",
     "build": "npm run lint && tsc",
-    "generate": "npm run build && echo 'Processing, please wait.' && node built/."
+    "generate": "node built/."
   },
   "bin": {
     "test-data-generator": "built/index.js"

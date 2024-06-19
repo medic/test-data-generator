@@ -12,9 +12,9 @@ RUN npm ci
 # https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user
 USER node
 
-ARG INSTANCE_COUCH_URL
-ENV COUCH_URL=INSTANCE_COUCH_URL
+ENV FILE=""
+ENV COUCH_URL=""
 
 VOLUME /app/test-data
-ARG FILE
-ENTRYPOINT ["npm", "run", "generate", "test-data/$FILE"]
+
+ENTRYPOINT npm run generate test-data/$FILE
