@@ -35,7 +35,7 @@ Instructions on setting up the project and getting it running on a local machine
 
 ### Install it globally
 Another option is to install the tool globally:
-- Build the project `npm run build`
+- Install package dependencies and build the project `npm ci`
 - Run `npm install -g` in the project root folder
 - Build, generate and upload data by running `test-data-generator <path_to_your_custom_design_file>`.
 
