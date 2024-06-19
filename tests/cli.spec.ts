@@ -69,7 +69,7 @@ describe('cli', () => {
         assert.fail('Should have thrown an error');
       } catch (error) {
         expect(error?.message).to.equal(
-          'No path to the design file provided. Expected: test-data-generator *path_to_your_custom_design_file*'
+          'No path to the design file provided. Expected: npm run generate *path_to_your_custom_design_file*'
         );
       }
     });
