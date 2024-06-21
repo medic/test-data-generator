@@ -16,7 +16,7 @@
     "generate": "node built/."
   },
   "bin": {
-    "test-data-generator": "built/index.js"
+    "tdg": "built/index.js"
   },
   "keywords": [
     "CHT",

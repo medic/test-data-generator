@@ -15,6 +15,4 @@ USER node
 ENV FILE=""
 ENV COUCH_URL=""
 
-VOLUME /app/test-data
-
 ENTRYPOINT npm run generate test-data/$FILE

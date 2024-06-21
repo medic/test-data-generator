@@ -37,7 +37,7 @@ Instructions on setting up the project and getting it running on a local machine
 Another option is to install the tool globally:
 - Install package dependencies and build the project `npm ci`
 - Run `npm install -g` in the project root folder
-- Build, generate and upload data by running `test-data-generator <path_to_your_custom_design_file>`.
+- Build, generate and upload data by running `tdg <path_to_your_custom_design_file>`.
 
 ### Use it with Docker
 The tool is also available in Docker:

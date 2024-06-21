@@ -7,7 +7,7 @@ const getInputFilePath = () => {
   const args = process.argv.slice(2);
   if (!args?.length) {
     throw new Error(
-      'No path to the design file provided. Expected: npm run generate *path_to_your_custom_design_file*'
+      'No path to the design file provided.'
     );
   }
 
