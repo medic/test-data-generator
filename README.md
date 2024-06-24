@@ -19,18 +19,30 @@ Design the test data that fit your project hierarchy and reports. The tool will 
 
 ## Minimum System Requirements 
 
-- npm >= 8.0.0
-- node >= 16.0.0
+- npm >= 10.2.4
+- node >= 20.11.0
 
 ## Setup and Getting Started
 
 Instructions on setting up the project and getting it running on a local machine.
 
-- Set the `COUCH_URL` environment variable to point your test instance, for example it something similar to this: `http://[user]:[pass]@[host]:[port]/medic`
+- Set the `COUCH_URL` environment variable to point your test instance, for example it is something similar to this: `http://[user]:[pass]@[host]:[port]/medic`
 - Double-check your CHT test instance is running
-- Install the project by running `npm ci`
+- Clone or fork the test data generator repository
+- Install and build the project by running `npm ci` in the project root folder
 - Design the test data in a custom JavaScript file. See section [Designing Test Data](#designing-test-data).
 - Build, generate data and upload by running `npm run generate *path_to_your_custom_design_file*`
+
+### Install it globally
+Another option is to install the tool globally:
+- Install package dependencies and build the project `npm ci`
+- Run `npm install -g` in the project root folder
+- Build, generate and upload data by running `tdg <path_to_your_custom_design_file>`.
+
+### Use it with Docker
+The tool is also available in Docker:
+- Create the image `docker build -t test-data-generator .`
+- Run the container `docker run --rm -it -v <folder_path_of_your_design_file>:/app/test-data -e COUCH_URL=<test_instance_CouchDB_URL> -e FILE=<your_design_file> test-data-generator`
 
 ## Designing Test Data
 

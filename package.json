@@ -1,6 +1,6 @@
 {
   "name": "test-data-generator",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Tool to upload test data into CHT test instances.",
   "type": "module",
   "main": "built/index.js",
@@ -9,17 +9,21 @@
     "npm": ">=10.2.4"
   },
   "scripts": {
+    "postinstall": "npm run build",
     "test": "mocha",
     "lint": "eslint .",
     "build": "npm run lint && tsc",
-    "generate": "npm run build && echo 'Processing, please wait.' && node built/."
+    "generate": "node built/."
+  },
+  "bin": {
+    "tdg": "built/index.js"
   },
   "keywords": [
     "CHT",
     "test data"
   ],
-  "author": "latin-panda",
-  "license": "GNU GPLv3",
+  "author": "",
+  "license": "AGPL-3.0-only",
   "dependencies": {
     "@faker-js/faker": "^8.3.1",
     "axios": "^1.6.2",
