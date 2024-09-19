@@ -1,20 +1,21 @@
-import axios from 'axios';
 import { v4 as uuid } from 'uuid';
-import { DocType, Parent, Doc } from './doc-design.js';
-import { environment } from './environment.js';
+import { Doc, DocType, Parent } from './doc-design.js';
+import { DocWriter } from './doc-writer.js';
+
+const docWriter = new DocWriter();
 
 export class Docs {
-  private static async saveDocs(docs, dbName = 'medic', batchId) {
-    const path = `${environment.getChtUrl()}/${dbName}/_bulk_docs`;
-    try {
-      await axios.post(path, { docs });
-      console.info(`Successfully saved ${docs.length} docs from ${batchId}.`);
-    } catch (error) {
-      console.error(`Failed saving docs from ${batchId}. Errors: `, error.message || error.errors || error);
-    }
+  private static async saveDocs(docs, dbName, batchId) {
+    console.info(`Saving ${docs.length} docs for ${batchId}...`);
+    return docWriter.write(docs, dbName);
   }
 
   static async createDocs(designs, parentDoc?: Doc) {
+    await Docs.createDocsForDesigns(designs, parentDoc);
+    await docWriter.flush();
+  }
+
+  private static async createDocsForDesigns(designs, parentDoc?: Doc) {
     for(const [index, design] of designs.entries()) {
       if (!design.designId) {
         design.designId = index;
@@ -46,7 +47,7 @@ export class Docs {
     const entityWithChildrenToCreate = batch
       .filter(entity => entity.doc.type !== DocType.dataRecord && entity.design.children);
     for(const entity of entityWithChildrenToCreate) {
-      await Docs.createDocs(entity.design.children, entity.doc);
+      await Docs.createDocsForDesigns(entity.design.children, entity.doc);
     }
   }
 
