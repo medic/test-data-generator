@@ -1,8 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { Doc, DocType, Parent } from './doc-design.js';
-import { DocWriter } from './doc-writer.js';
-
-const docWriter = new DocWriter();
+import docWriter from './doc-writer.js';
 
 export class Docs {
   private static async saveDocs(docs, dbName, batchId) {
