@@ -94,6 +94,23 @@ Based on that previous example. The tool will create and push 14 report docs at 
 
 See the [sample-designs](./sample-designs) folder for more examples.
 
+## Performance considerations
+
+Many factors can affect the performance of the generator including the number of documents to generate, the size of the documents, the network speed, and the server's performance. When adding large datasets (100,000+ documents) to a database with existing views (e.g. the `medic` database), Couch's view indexing jobs can significantly impact the performance of the generator.
+
+Under optimal conditions, running against a local CouchDB instance and inserting data into a new database with no views, the document creation rate has been measured at `~360,000 docs/min`.  
+
+However, when running against a local CouchDB instance and inserting data into an existing `medic` database, the measured document creation rate was `~8000 docs/min`.
+
+### Generate then replicate
+
+When generating a massive dataset (100,000+ documents) for an existing database with views (e.g. the `medic` database), it may be preferable to actually generate the data into a temporary database (on the same CouchDB instance) and then replicate the data into the target database (e.g. using the Fauxton form at `_utils/#/replication/_create`). The document creation rate for this process (including generating into the temp DB, replicating to `medic` DB, and indexing views) has been measured at `~11,000 docs/min`.
+
+While the speed gains of this approach are somewhat modest, it has a couple additional benefits:
+
+- The time spent running the actual generation script is minimal (since docs are added to the temp db at `~360,000 docs/min`). So, there is less danger of the script being interrupted or becoming disconnected from the CouchDB instance. Once all the docs are saved in the temp DB, the replication/indexing happens internally within the Couch instance. This is where the vast majority of the time is spent.
+- You can keep your generated dataset in the temp DB for future use, without having to regenerate it each time you want to test with it.
+
 ## License
 
 This project is licensed under the GNU GPLv3 License - see the LICENSE.md file for details
