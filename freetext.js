@@ -100,13 +100,13 @@ const getPregnancyDangerSign = (patient) => {
 
 
 const db = 'medic';
-const rpc = 1000;
+const rpc = 1100;
 
 export default (context) => {
   return [
     {
       designId: 'district-hospital',
-      amount: 6,
+      amount: 3,
       db,
       getDoc: () => getDistrictHospital(context),
       children: [ // Each district hospital has 1010 contacts (10000 reports)
