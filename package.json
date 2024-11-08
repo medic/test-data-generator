@@ -17,6 +17,9 @@
   "bin": {
     "tdg": "built/index.js"
   },
+  "files": [
+    "/built"
+  ],
   "keywords": [
     "CHT",
     "test data"
