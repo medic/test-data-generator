@@ -1,16 +1,44 @@
-import axios from 'axios';
 import { v4 as uuid } from 'uuid';
 import { DocType, Parent, Doc } from './doc-design.js';
 import { environment } from './environment.js';
 
 export class Docs {
-  private static async saveDocs(docs, dbName = 'medic', batchId) {
-    const path = `${environment.getChtUrl()}/${dbName}/_bulk_docs`;
-    try {
-      await axios.post(path, { docs });
-      console.info(`Successfully saved ${docs.length} docs from ${batchId}.`);
-    } catch (error) {
-      console.error(`Failed saving docs from ${batchId}. Errors: `, error.message || error.errors || error);
+  static readonly MAX_QUEUE = 300;
+  static readonly queue = {};
+  
+  private static async saveDocs(docs, dbName = 'medic', batchId, flush = false) {
+    if (!Docs.queue[dbName]) {
+      Docs.queue[dbName] = [...docs];
+    } else {
+      Docs.queue[dbName].push(...docs);
+    }
+
+    if ((Docs.queue[dbName].length < Docs.MAX_QUEUE && !flush) || !Docs.queue[dbName].length) {
+      return;
+    }
+
+    const path = `${environment.getChtUrl()}${dbName}/_bulk_docs`;
+    const response = await fetch(path, {
+      method: 'POST',
+      headers: {
+        authorization: `Basic ${environment.getAuth()}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ docs:  Docs.queue[dbName] }),
+    });
+    if (!response.ok) {
+      const body = await response.text();
+      console.error(`Failed saving docs from ${batchId}. Errors: `, body);
+      throw new Error(body);
+    }
+
+    console.info(`Successfully saved ${Docs.queue[dbName].length} docs from ${batchId}.`);
+    Docs.queue[dbName] = [];
+  }
+
+  static async flush() {
+    for (const dbName of Object.keys(Docs.queue)) {
+      await Docs.saveDocs([], dbName, 1, true);
     }
   }
 
@@ -21,6 +49,7 @@ export class Docs {
       }
       await this.createDocsForDesign(design, parentDoc);
     }
+    !parentDoc && await Docs.flush();
   }
 
   private static async createDocsForDesign(design, parentDoc?: Doc) {

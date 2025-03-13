@@ -21,9 +21,7 @@ describe('environment', () => {
 
     [
       'invalid_url',
-      'admin:password@localhost:5984',
-      'localhost:5984',
-      'http:///admin:password@localhost:5984'
+      '1231231',
     ].forEach(couchURL => {
       it('should throw an error when COUCH_URL does not match the expected format', () => {
         process.env.COUCH_URL = couchURL;
@@ -32,14 +30,29 @@ describe('environment', () => {
     });
 
     [
-      ['http://admin:password@localhost:5984', 'http://admin:password@localhost:5984'],
-      ['https://root:root@google.com/', 'https://root:root@google.com'],
-      ['http://admin:password@localhost:5984/medic', 'http://admin:password@localhost:5984'],
-      ['https://root:root@google.com/somewhere/else', 'https://root:root@google.com'],
+      ['http://admin:password@localhost:5984', 'http://localhost:5984/'],
+      ['https://root:root@google.com/', 'https://google.com/'],
+      ['http://admin:password@localhost:5984/medic', 'http://localhost:5984/'],
+      ['https://root:root@google.com/somewhere/else', 'https://google.com/'],
     ].forEach(([couchURL, expected]) => {
-      it('should return the base URL when COUCH_URL is valid', () => {
+      it('should return the base URL when COUCH_URL is valid', async () => {
         process.env.COUCH_URL = couchURL;
+        const { environment } = await import(`../src/environment.ts?${Date.now()}`);
         const result = environment.getChtUrl();
+        expect(result).to.equal(expected);
+      });
+    });
+  });
+
+  describe('getAuth', () => {
+    [
+      ['http://admin:password@localhost:5984', 'YWRtaW46cGFzc3dvcmQ='],
+      ['https://root:root@google.com/', 'cm9vdDpyb290'],
+    ].forEach(([couchURL, expected]) => {
+      it('should return the correct auth when COUCH_URL is valid', async () => {
+        process.env.COUCH_URL = couchURL;
+        const { environment } = await import(`../src/environment.ts?${Date.now()}`);
+        const result = environment.getAuth();
         expect(result).to.equal(expected);
       });
     });
@@ -52,18 +65,20 @@ describe('environment', () => {
     ].forEach(couchURL => {
       it(`should include username from COUCH_URL (${couchURL})`, async () => {
         process.env.COUCH_URL = couchURL;
+        const { environment } = await import(`../src/environment.ts?${Date.now()}`);
         const context = environment.getUsername();
         expect(context).to.equal('admin');
       });
     });
 
-    it('should include null username when not included in COUCH_URL', async () => {
+    it('should include undefined username when not included in COUCH_URL', async () => {
       process.env.COUCH_URL = 'http://localhost:5984';
+      const { environment } = await import(`../src/environment.ts?${Date.now()}`);
       const context = environment.getUsername();
-      expect(context).to.be.null;
+      expect(context).to.equal('');
       expect(consoleErrorStub.calledOnce).to.be.true;
       expect(consoleErrorStub.args[0]).to.deep
-        .equal([`Failed to parse username from COUCH_URL [${environment.getChtUrl()}].`]);
+        .equal([`Failed to parse username from COUCH_URL [${process.env.COUCH_URL}].`]);
     });
   });
 });
