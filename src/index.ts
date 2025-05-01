@@ -9,7 +9,7 @@ import { context } from './design-context.js';
   try {
     const designScriptPath = cli.getInputFilePath();
     const getDesign: DocDesign = (await import(designScriptPath)).default;
-    Docs.createDocs(getDesign(context.get()));
+    await Docs.createDocs(getDesign(context.get()));
   } catch (error) {
     console.error('ERROR: ', error.message || error);
     process.exit(1);

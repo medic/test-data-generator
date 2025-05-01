@@ -26,18 +26,20 @@
   "license": "AGPL-3.0-only",
   "dependencies": {
     "@faker-js/faker": "^8.3.1",
-    "axios": "^1.6.2",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@medic/eslint-config": "^1.1.0",
     "@types/chai": "^4.3.11",
+    "@types/chai-as-promised": "^8.0.2",
     "@types/mocha": "^10.0.6",
     "@types/node": "^20.10.4",
     "@types/sinon": "^17.0.2",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
     "@typescript-eslint/parser": "^6.13.2",
     "chai": "^4.3.10",
+    "chai-as-promised": "^8.0.1",
+    "chai-exclude": "^2.1.1",
     "eslint": "^8.55.0",
     "mocha": "^10.2.0",
     "sinon": "^17.0.1",

@@ -10,7 +10,7 @@ export class Docs {
 
   static async createDocs(designs, parentDoc?: Doc) {
     await Docs.createDocsForDesigns(designs, parentDoc);
-    await docWriter.flush();
+    !parentDoc && await docWriter.flush();
   }
 
   private static async createDocsForDesigns(designs, parentDoc?: Doc) {
