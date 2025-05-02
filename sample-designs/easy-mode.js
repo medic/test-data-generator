@@ -388,12 +388,12 @@ export default (context) => {
   return [
     {
       designId: 'district-hospital',
-      amount: 1,
+      amount: 5,
       getDoc: () => getDistrictHospital(context),
       children: [
         {
           designId: 'health-center',
-          amount: 5,
+          amount: 10,
           getDoc: () => getHealthCenter(context),
           children: [
             {
