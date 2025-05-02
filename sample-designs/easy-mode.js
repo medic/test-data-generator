@@ -392,6 +392,23 @@ export default (context) => {
       getDoc: () => getDistrictHospital(context),
       children: [
         {
+          designId: 'supervisor',
+          amount: 1,
+          getDoc: () => getPerson(context, 'chw_supervisor'),
+          children: [
+            {
+              designId: 'target',
+              amount: 1,
+              getDoc: ({ parent }) => getTargetDocument(context, parent),
+            },
+            ...getUserDesigns({
+              username: faker.internet.userName().toLowerCase(),
+              roles: ['chw_supervisor'],
+              context
+            }),
+          ]
+        },
+        {
           designId: 'health-center',
           amount: 10,
           getDoc: () => getHealthCenter(context),
@@ -406,7 +423,11 @@ export default (context) => {
                   amount: 1,
                   getDoc: ({ parent }) => getTargetDocument(context, parent),
                 },
-                ...getUserDesigns({ username: faker.internet.userName().toLowerCase(), context }),
+                ...getUserDesigns({
+                  username: faker.internet.userName().toLowerCase(),
+                  roles: ['chw'],
+                  context
+                }),
               ]
             },
             {
