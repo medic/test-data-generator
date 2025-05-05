@@ -5,6 +5,8 @@ import { Docs } from './docs.js';
 import { DocDesign } from './doc-design.js';
 import { context } from './design-context.js';
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = String(0); // allow self-signed certificates
+
 (async function() {
   try {
     const designScriptPath = cli.getInputFilePath();

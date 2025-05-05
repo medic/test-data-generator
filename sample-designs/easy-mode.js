@@ -58,6 +58,11 @@ const getPerson = (context, role, { sex = faker.person.sex(), ageRange = { min: 
   };
 };
 
+const getUser = (context, role) => {
+  const person = getPerson(context, role);
+  person.username = faker.internet.userName().toLowerCase();
+  return person;
+};
 
 const getTargetDocument = (context, contact, period) => {
   if (!period) {
@@ -394,7 +399,7 @@ export default (context) => {
         {
           designId: 'supervisor',
           amount: 1,
-          getDoc: () => getPerson(context, 'chw_supervisor'),
+          getDoc: () => getUser(context, 'chw_supervisor'),
           children: [
             {
               designId: 'target',
@@ -402,7 +407,6 @@ export default (context) => {
               getDoc: ({ parent }) => getTargetDocument(context, parent),
             },
             ...getUserDesigns({
-              username: faker.internet.userName().toLowerCase(),
               roles: ['chw_supervisor'],
               context
             }),
@@ -416,7 +420,7 @@ export default (context) => {
             {
               designId: 'chw',
               amount: 1,
-              getDoc: () => getPerson(context, 'chw'),
+              getDoc: () => getUser(context, 'chw'),
               children: [
                 {
                   designId: 'target',
@@ -424,7 +428,6 @@ export default (context) => {
                   getDoc: ({ parent }) => getTargetDocument(context, parent),
                 },
                 ...getUserDesigns({
-                  username: faker.internet.userName().toLowerCase(),
                   roles: ['chw'],
                   context
                 }),
