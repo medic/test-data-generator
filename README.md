@@ -59,7 +59,7 @@ tdg ./sample-designs/easy-mode.js
 
 #### Example using [docker helper](https://docs.communityhealthtoolkit.org/hosting/4.x/app-developer/#cht-docker-helper-for-4x) to deploy your local CHT:
 ```bash
-export COUCH_URL=https://127-0-0-1.local-ip.medicmobile.org:10444
+export COUCH_URL=https://medic:password@127-0-0-1.local-ip.medicmobile.org:10444
 tdg ./sample-designs/easy-mode.js
 ```
 
