@@ -13,9 +13,9 @@ Design the test data that fit your project hierarchy and reports. The tool will 
 ## Technologies and Packages Used
 
 - TypeScript
-- Axios
 - UUID
 - Faker
+- Luxon
 
 ## Minimum System Requirements 
 
@@ -30,19 +30,40 @@ Instructions on setting up the project and getting it running on a local machine
 - Double-check your CHT test instance is running
 - Clone or fork the test data generator repository
 - Install and build the project by running `npm ci` in the project root folder
-- Design the test data in a custom JavaScript file. See section [Designing Test Data](#designing-test-data).
-- Build, generate data and upload by running `npm run generate *path_to_your_custom_design_file*`
+- Design the test data in a custom JavaScript file. See the section [Designing Test Data](#designing-test-data).
+- Build, generate data, and upload by running `npm run generate *path_to_your_custom_design_file*`
 
 ### Install it globally
 Another option is to install the tool globally:
 - Install package dependencies and build the project `npm ci`
 - Run `npm install -g` in the project root folder
-- Build, generate and upload data by running `tdg <path_to_your_custom_design_file>`.
+- Build, generate, and upload data by running `tdg <path_to_your_custom_design_file>`.
 
 ### Use it with Docker
 The tool is also available in Docker:
 - Create the image `docker build -t test-data-generator .`
 - Run the container `docker run --rm -it -v <folder_path_of_your_design_file>:/app/test-data -e COUCH_URL=<test_instance_CouchDB_URL> -e FILE=<your_design_file> test-data-generator`
+
+
+### Quick Start 
+
+This tool provides a design that will populate your CHT instance with sample data that touches or triggers most Default Configuration workflows.
+This guide assumes that you have installed the `test-data-generator` as a global dependency.
+
+
+#### Example using [local setup](https://docs.communityhealthtoolkit.org/building/local-setup/) to deploy your local CHT: 
+```bash
+export COUCH_URL=https://medic:password@localhost
+tdg ./sample-designs/easy-mode.js
+```
+
+#### Example using [docker helper](https://docs.communityhealthtoolkit.org/hosting/4.x/app-developer/#cht-docker-helper-for-4x) to deploy your local CHT:
+```bash
+export COUCH_URL=https://medic:password@127-0-0-1.local-ip.medicmobile.org:10444
+tdg ./sample-designs/easy-mode.js
+```
+
+Running this command will add ~15.000 documents to your CHT instance, and it includes creation of users, each having around 300 documents each.
 
 ## Designing Test Data
 
@@ -96,7 +117,7 @@ See the [sample-designs](./sample-designs) folder for more examples.
 
 ## Performance considerations
 
-Many factors can affect the performance of the generator including the number of documents to generate, the size of the documents, the network speed, and the server's performance. When adding large datasets (100,000+ documents) to a database with existing views (e.g. the `medic` database), Couch's view indexing jobs can significantly impact the performance of the generator.
+Many factors can affect the performance of the generator, including the number of documents to generate, the size of the documents, the network speed, and the server's performance. When adding large datasets (100,000+ documents) to a database with existing views (e.g. the `medic` database), Couch's view indexing jobs can significantly impact the performance of the generator.
 
 Under optimal conditions, running against a local CouchDB instance and inserting data into a new database with no views, the document creation rate has been measured at `~360,000 docs/min`.  
 
