@@ -1,17 +1,21 @@
 import { resolve, extname } from 'node:path';
 import { existsSync } from 'node:fs';
 
-const SUPPORTED_INPUT_FILE = '.js';
+const args = () => process.argv.slice(2);
 
+const getChtUrl = () => {
+  return args()[1] || process.env.COUCH_URL;
+};
+
+const SUPPORTED_INPUT_FILE = '.js';
 const getInputFilePath = () => {
-  const args = process.argv.slice(2);
-  if (!args?.length) {
+  if (!args()?.length) {
     throw new Error(
       'No path to the design file provided.'
     );
   }
 
-  const path = resolve(args[0]);
+  const path = resolve(args()[0]);
   if (extname(path) !== SUPPORTED_INPUT_FILE) {
     throw new Error(
       'The design file is not a JavaScript file. Retry using a file with extension ending in .js'
@@ -27,4 +31,5 @@ const getInputFilePath = () => {
 
 export const cli = {
   getInputFilePath,
+  getChtUrl,
 };
