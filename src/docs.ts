@@ -4,7 +4,7 @@ import docWriter from './doc-writer.js';
 import ReportsSaver from './reports-saver.js';
 
 export class Docs {
-  private static reportsSaver: ReportsSaver | null = null;
+  private static reportsSaver?: ReportsSaver;
 
   static setReportsSaver(saver: ReportsSaver) {
     Docs.reportsSaver = saver;
@@ -17,15 +17,7 @@ export class Docs {
       const savedReports = await Docs.reportsSaver.saveReports(docs);
       const savedIds = new Set(savedReports.map(r => r._id));
       docsToUpload = docs.filter(doc => !savedIds.has(doc._id));
-      
-      if (docsToUpload.length < docs.length) {
-        console.info(`Saving ${docsToUpload.length} docs for ${batchId} (${docs.length - docsToUpload.length} reports saved to JSON, will not upload)...`);
-      } else {
-        console.info(`Saving ${docsToUpload.length} docs for ${batchId}...`);
-      }
-    } else {
-      console.info(`Saving ${docs.length} docs for ${batchId}...`);
-    }
+    } 
     
     if (docsToUpload.length > 0) {
       return docWriter.write(docsToUpload, dbName);
