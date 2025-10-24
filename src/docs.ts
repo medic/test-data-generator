@@ -1,16 +1,45 @@
 import { v4 as uuid } from 'uuid';
 import { Doc, DocType, Parent } from './doc-design.js';
 import docWriter from './doc-writer.js';
+import ReportsSaver from './reports-saver.js';
 
 export class Docs {
+  private static reportsSaver: ReportsSaver | null = null;
+
+  static setReportsSaver(saver: ReportsSaver) {
+    Docs.reportsSaver = saver;
+  }
+
   private static async saveDocs(docs, dbName, batchId) {
-    console.info(`Saving ${docs.length} docs for ${batchId}...`);
-    return docWriter.write(docs, dbName);
+    let docsToUpload = docs;
+    
+    if (Docs.reportsSaver) {
+      const savedReports = await Docs.reportsSaver.saveReports(docs);
+      const savedIds = new Set(savedReports.map(r => r._id));
+      docsToUpload = docs.filter(doc => !savedIds.has(doc._id));
+      
+      if (docsToUpload.length < docs.length) {
+        console.info(`Saving ${docsToUpload.length} docs for ${batchId} (${docs.length - docsToUpload.length} reports saved to JSON, will not upload)...`);
+      } else {
+        console.info(`Saving ${docsToUpload.length} docs for ${batchId}...`);
+      }
+    } else {
+      console.info(`Saving ${docs.length} docs for ${batchId}...`);
+    }
+    
+    if (docsToUpload.length > 0) {
+      return docWriter.write(docsToUpload, dbName);
+    }
   }
 
   static async createDocs(designs, parentDoc?: Doc) {
     await Docs.createDocsForDesigns(designs, parentDoc);
-    !parentDoc && await docWriter.flush();
+    if (!parentDoc) {
+      await docWriter.flush();
+      if (Docs.reportsSaver) {
+        await Docs.reportsSaver.flush();
+      }
+    }
   }
 
   private static async createDocsForDesigns(designs, parentDoc?: Doc) {
