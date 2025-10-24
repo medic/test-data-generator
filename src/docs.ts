@@ -10,7 +10,7 @@ export class Docs {
     Docs.reportsSaver = saver;
   }
 
-  private static async saveDocs(docs: Doc[], dbName: string, batchId?: string) {
+  private static async saveDocs(docs: Doc[], dbName: string) {
     let docsToUpload = docs;
     
     if (Docs.reportsSaver) {
@@ -62,7 +62,7 @@ export class Docs {
         };
       });
 
-    await Docs.saveDocs(batch.map(entity => entity.doc), design.db, design.designId);
+    await Docs.saveDocs(batch.map(entity => entity.doc), design.db);
     const entityWithChildrenToCreate = batch
       .filter(entity => entity.doc.type !== DocType.dataRecord && entity.design.children);
     for(const entity of entityWithChildrenToCreate) {
