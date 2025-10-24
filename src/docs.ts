@@ -10,7 +10,7 @@ export class Docs {
     Docs.reportsSaver = saver;
   }
 
-  private static async saveDocs(docs, dbName, batchId) {
+  private static async saveDocs(docs: Doc[], dbName: string, batchId?: string) {
     let docsToUpload = docs;
     
     if (Docs.reportsSaver) {

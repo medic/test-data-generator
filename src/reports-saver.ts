@@ -42,11 +42,12 @@ class ReportsSaver {
       let username = this.currentUser;
       
       if ('contact' in report && report.contact && typeof report.contact === 'object') {
-        const contact: any = report.contact;
+        type ContactHierarchy = { _id?: string; parent?: ContactHierarchy };
+        const contact = report.contact as ContactHierarchy;
         let current = contact;
         while (current && current.parent) {
           if (current.parent._id && this.facilityToUser.has(current.parent._id)) {
-            username = this.facilityToUser.get(current.parent._id)!;
+            username = this.facilityToUser.get(current.parent._id);
             break;
           }
           current = current.parent;

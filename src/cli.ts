@@ -47,8 +47,12 @@ const getSaveReportsPercentage = (): number => {
 const SUPPORTED_INPUT_FILE = '.js';
 const getInputFilePath = () => {
   const designFileArg = args().find((arg, idx) => {
-    if (arg.startsWith('--')) return false;
-    if (idx > 0 && args()[idx - 1].startsWith('--')) return false;
+    if (arg.startsWith('--')){
+      return false;
+    }
+    if (idx > 0 && args()[idx - 1].startsWith('--')){
+      return false;
+    }
     return true;
   });
   
