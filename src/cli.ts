@@ -5,12 +5,8 @@ const args = () => process.argv.slice(2);
 
 const getFlag = (flag: string): string | undefined => {
   const flagIndex = args().indexOf(flag);
-  if (flagIndex !== -1 && args()[flagIndex + 1]) {
-    return args()[flagIndex + 1];
-  }
-  return undefined;
+  return flagIndex !== -1 ? args()[flagIndex + 1] : undefined;
 };
-
 const getChtUrl = () => {
   const flagUrl = getFlag('--couch-url');
   if (flagUrl) {
