@@ -9,10 +9,10 @@
     "npm": ">=10.2.4"
   },
   "scripts": {
-    "postinstall": "npm run build",
-    "test": "mocha",
+    "prepare": "npm run build",
+    "test": "npm run lint && mocha",
     "lint": "eslint src tests sample-designs",
-    "build": "npm run lint && tsc",
+    "build": "tsc",
     "generate": "node built/."
   },
   "bin": {
