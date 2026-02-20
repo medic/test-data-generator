@@ -9,10 +9,10 @@
     "npm": ">=10.2.4"
   },
   "scripts": {
-    "postinstall": "npm run build",
-    "test": "mocha",
-    "lint": "eslint .",
-    "build": "npm run lint && tsc",
+    "prepare": "npm run build",
+    "test": "npm run lint && mocha",
+    "lint": "eslint src tests sample-designs",
+    "build": "tsc",
     "generate": "node built/."
   },
   "bin": {
@@ -41,7 +41,7 @@
     "chai": "^4.3.10",
     "chai-as-promised": "^8.0.1",
     "chai-exclude": "^2.1.1",
-    "eslint": "^8.55.0",
+    "eslint": "^8.57.1",
     "mocha": "^10.2.0",
     "sinon": "^17.0.1",
     "ts-node": "^10.9.2",
