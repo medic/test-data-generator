@@ -435,7 +435,7 @@ export default (context) => {
             },
             {
               designId: 'household',
-              amount: 20,
+              amount: 70,
               getDoc: () => getHousehold(context),
               children: [
                 {
