@@ -435,12 +435,12 @@ export default (context) => {
             },
             {
               designId: 'household',
-              amount: 70,
+              amount: 100,
               getDoc: () => getHousehold(context),
               children: [
                 {
                   designId: 'woman-person',
-                  amount: 1,
+                  amount: 2,
                   getDoc: () => getWoman(context),
                   children: [
                     {
@@ -475,12 +475,12 @@ export default (context) => {
                 },
                 {
                   designId: 'child-person',
-                  amount: 2,
+                  amount: 3,
                   getDoc: () => getChild(context),
                 },
                 {
                   designId: 'infant-person',
-                  amount: 1,
+                  amount: 2,
                   getDoc: () => getInfant(context),
                   children: [
                     {
