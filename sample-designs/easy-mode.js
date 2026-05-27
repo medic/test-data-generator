@@ -445,12 +445,12 @@ export default (context) => {
                   children: [
                     {
                       designId: 'pregnancy-report',
-                      amount: 1,
+                      amount: 3,
                       getDoc: ({parent}) => pregnancyRegistration(parent),
                     },
                     {
                       designId: 'pregnancy-home-visit',
-                      amount: 1,
+                      amount: 15,
                       getDoc: ({parent}) => getPregnancyHomeVisit(parent),
                     }
                   ]
@@ -462,7 +462,7 @@ export default (context) => {
                   children: [
                     {
                       designId: 'pregnancy-danger-report',
-                      amount: 1,
+                      amount: 5,
                       getDoc: ({parent}) => getPregnancyDangerSign(parent),
                     },
                     {
@@ -485,7 +485,7 @@ export default (context) => {
                   children: [
                     {
                       designId: 'pnc_danger_sign_follow_up_baby-report',
-                      amount: 1,
+                      amount: 4,
                       getDoc: ({parent}) => getPNCDangerSignFollowUpBaby(parent),
                     },
                   ]
