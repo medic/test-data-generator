@@ -65,7 +65,9 @@ export COUCH_URL=https://medic:password@127-0-0-1.local-ip.medicmobile.org:10444
 tdg ./sample-designs/easy-mode.js
 ```
 
-Running this command will add ~15.000 documents to your CHT instance, and it includes creation of users, each having around 300 documents each.
+Running this command will add ~15.000 documents to your CHT instance, and it includes creation of users, each having around 300 documents each. 
+
+To log in as any of the users, find their username in the admin section and they all have `password` as their password.
 
 ## Designing Test Data
 
