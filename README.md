@@ -33,20 +33,16 @@ Before doing anything else:
   - Pass it as the second parameter to the tool
 
 ### Install it globally
-- Clone or fork the test data generator repository
-- Install package dependencies by running `npm ci` in the project root folder
-- Run `npm install -g` in the project root folder
+
+- Run `npm i -g github:medic/test-data-generator`
+  - Note: you can install a specific git ref (branch/commit/tag) by targeting it in the command `npm i -g github:medic/test-data-generator#<your-ref-here>`. By default, the latest from the `main` branch is installed.
 - Generate and upload data by running `tdg <path_to_your_custom_design_file> <*CHT_URL*>`.
 
-### Run it without installing (recommended)
-
-The tool runs straight from a git ref, with no clone and no build step:
+### Run it without installing
 
 ```bash
-npx -y github:medic/test-data-generator#main <path_to_your_custom_design_file> <*CHT_URL*>
+npx -y github:medic/test-data-generator <path_to_your_custom_design_file> <*CHT_URL*>
 ```
-
-Swap `#main` for any branch, tag, or commit to run that version instead.
 
 ### Run it from a local clone
 - Install package dependencies by running `npm ci` in the project root folder
