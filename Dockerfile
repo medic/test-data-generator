@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm ci
+RUN npm ci --omit=dev
 
 # Using the 1000:1000 user is recommended for VSCode dev containers
 # https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user

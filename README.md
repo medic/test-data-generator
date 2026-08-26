@@ -24,22 +24,33 @@ Design the test data that fit your project hierarchy and reports. The tool will 
 
 ## Setup and Getting Started
 
-Instructions on setting up the project and getting it running on a local machine.
+Before doing anything else:
 
 - Double-check your CHT test instance is running
-- Clone or fork the test data generator repository
-- Install and build the project by running `npm ci` in the project root folder
 - Design the test data in a custom JavaScript file. See the section [Designing Test Data](#designing-test-data).
 - Set your target instance CHT_URL:
   - Either set the `COUCH_URL` environment variable to point your test instance, for example it is something similar to this: `http://[user]:[pass]@[host]:[port]/medic`
-  - Pass it as a parameter to the `generate` script
-- Build, generate data, and upload by running `npm run generate <path_to_your_custom_design_file> <*CHT_URL*>`
+  - Pass it as the second parameter to the tool
 
 ### Install it globally
-Another option is to install the tool globally:
-- Install package dependencies and build the project `npm ci`
+- Clone or fork the test data generator repository
+- Install package dependencies by running `npm ci` in the project root folder
 - Run `npm install -g` in the project root folder
-- Build, generate, and upload data by running `tdg <path_to_your_custom_design_file> <*CHT_URL*>`.
+- Generate and upload data by running `tdg <path_to_your_custom_design_file> <*CHT_URL*>`.
+
+### Run it without installing (recommended)
+
+The tool runs straight from a git ref, with no clone and no build step:
+
+```bash
+npx -y github:medic/test-data-generator#main <path_to_your_custom_design_file> <*CHT_URL*>
+```
+
+Swap `#main` for any branch, tag, or commit to run that version instead.
+
+### Run it from a local clone
+- Install package dependencies by running `npm ci` in the project root folder
+- Generate and upload data by running `npm run generate <path_to_your_custom_design_file> <*CHT_URL*>`
 
 ### Use it with Docker
 The tool is also available in Docker:

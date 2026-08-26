@@ -3,21 +3,22 @@
   "version": "1.0.0",
   "description": "Tool to upload test data into CHT test instances.",
   "type": "module",
-  "main": "built/index.js",
   "engines": {
     "node": ">=20.11.0",
     "npm": ">=10.2.4"
   },
   "scripts": {
-    "postinstall": "npm run build",
     "test": "mocha",
-    "lint": "eslint .",
-    "build": "npm run lint && tsc",
-    "generate": "node built/."
+    "lint": "eslint . && tsc --noEmit",
+    "generate": "node bin/tdg.js"
   },
   "bin": {
-    "tdg": "built/index.js"
+    "tdg": "bin/tdg.js"
   },
+  "files": [
+    "bin",
+    "src"
+  ],
   "keywords": [
     "CHT",
     "test data"
@@ -27,6 +28,7 @@
   "dependencies": {
     "@faker-js/faker": "^8.3.1",
     "luxon": "^3.6.1",
+    "tsx": "^4.21.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
