@@ -1,16 +1,37 @@
 import { v4 as uuid } from 'uuid';
 import { Doc, DocType, Parent } from './doc-design.js';
 import docWriter from './doc-writer.js';
+import ReportsSaver from './reports-saver.js';
 
 export class Docs {
-  private static async saveDocs(docs, dbName, batchId) {
-    console.info(`Saving ${docs.length} docs for ${batchId}...`);
-    return docWriter.write(docs, dbName);
+  private static reportsSaver?: ReportsSaver;
+
+  static setReportsSaver(saver: ReportsSaver) {
+    Docs.reportsSaver = saver;
+  }
+
+  private static async saveDocs(docs: Doc[], dbName: string) {
+    let docsToUpload = docs;
+    
+    if (Docs.reportsSaver) {
+      const savedReports = await Docs.reportsSaver.saveReports(docs);
+      const savedIds = new Set(savedReports.map(r => r._id));
+      docsToUpload = docs.filter(doc => !savedIds.has(doc._id));
+    } 
+    
+    if (docsToUpload.length > 0) {
+      return docWriter.write(docsToUpload, dbName);
+    }
   }
 
   static async createDocs(designs, parentDoc?: Doc) {
     await Docs.createDocsForDesigns(designs, parentDoc);
-    !parentDoc && await docWriter.flush();
+    if (!parentDoc) {
+      await docWriter.flush();
+      if (Docs.reportsSaver) {
+        await Docs.reportsSaver.flush();
+      }
+    }
   }
 
   private static async createDocsForDesigns(designs, parentDoc?: Doc) {
@@ -41,7 +62,7 @@ export class Docs {
         };
       });
 
-    await Docs.saveDocs(batch.map(entity => entity.doc), design.db, design.designId);
+    await Docs.saveDocs(batch.map(entity => entity.doc), design.db);
     const entityWithChildrenToCreate = batch
       .filter(entity => entity.doc.type !== DocType.dataRecord && entity.design.children);
     for(const entity of entityWithChildrenToCreate) {
